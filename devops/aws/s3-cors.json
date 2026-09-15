@@ -1,0 +1,13 @@
+[
+  {
+    "AllowedHeaders": ["*"],
+    "AllowedMethods": ["GET", "PUT", "POST", "HEAD"],
+    "AllowedOrigins": [
+      "http://localhost:3000",
+      "http://127.0.0.1:3000",
+      "https://*.workify.app"
+    ],
+    "ExposeHeaders": ["ETag"],
+    "MaxAgeSeconds": 3000
+  }
+]

@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  # ---------------------------------------------------------------------------
+  # Nginx Reverse Proxy (SSL Termination & Route Forwarding)
+  # ---------------------------------------------------------------------------
+  proxy:
+    image: nginx:alpine
+    container_name: workify_proxy_prod
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ../docker/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - frontend
+      - backend
+      - ml-service
+
+  # ---------------------------------------------------------------------------
+  # Frontend Application (Production Build)
+  # ---------------------------------------------------------------------------
+  frontend:
+    build:
+      context: ../../frontend
+      dockerfile: Dockerfile
+    container_name: workify_frontend_prod
+    restart: always
+    environment:
+      - VITE_API_URL=/api
+      - VITE_ML_URL=/ml
+
+  # ---------------------------------------------------------------------------
+  # Backend API (Django + Gunicorn)
+  # ---------------------------------------------------------------------------
+  backend:
+    build:
+      context: ../../backend
+      dockerfile: Dockerfile
+    container_name: workify_backend_prod
+    restart: always
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             python manage.py collectstatic --noinput &&
+             gunicorn core.wsgi:application --bind 0.0.0.0:8000 --workers 3"
+    environment:
+      - DEBUG=0
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+      - ML_SERVICE_URL=http://ml-service:5001
+      - SECRET_KEY=${SECRET_KEY}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - USE_S3=1
+      - AWS_STORAGE_BUCKET_NAME=${AWS_STORAGE_BUCKET_NAME}
+      - AWS_S3_REGION_NAME=${AWS_S3_REGION_NAME:-ap-south-1}
+    depends_on:
+      - redis
+
+  # ---------------------------------------------------------------------------
+  # ML Recommendation & Elo Engine (FastAPI + Uvicorn)
+  # ---------------------------------------------------------------------------
+  ml-service:
+    build:
+      context: ../../ml-service
+      dockerfile: Dockerfile
+    container_name: workify_ml_service_prod
+    restart: always
+    command: uvicorn main:app --host 0.0.0.0 --port 5001 --workers 2
+    environment:
+      - PORT=5001
+      - REDIS_URL=${REDIS_URL}
+
+  # ---------------------------------------------------------------------------
+  # Redis Cache & Background Tasks
+  # ---------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: workify_redis_prod
+    restart: always
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_prod_data:/data
+
+volumes:
+  redis_prod_data:

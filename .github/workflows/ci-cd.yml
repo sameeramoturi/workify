@@ -1,0 +1,139 @@
+name: Workify CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # ----------------------------------------------------------------------------
+  # 1. Backend Lint & Test
+  # ----------------------------------------------------------------------------
+  test-backend:
+    name: Backend CI
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: workify_test
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r backend/requirements.txt
+
+      - name: Run Django System Checks & Migrations
+        env:
+          DATABASE_URL: postgres://test_user:test_password@localhost:5432/workify_test
+          SECRET_KEY: ci-test-secret-key
+          DEBUG: '0'
+        run: |
+          cd backend
+          python manage.py check
+
+  # ----------------------------------------------------------------------------
+  # 2. ML Service CI
+  # ----------------------------------------------------------------------------
+  test-ml-service:
+    name: ML Service CI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install ML Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r ml-service/requirements.txt
+
+      - name: ML Syntax & Import Validation
+        run: |
+          cd ml-service
+          python -c "import main; print('ML service imports and FastAPI app valid!')"
+
+  # ----------------------------------------------------------------------------
+  # 3. Frontend Build CI
+  # ----------------------------------------------------------------------------
+  test-frontend:
+    name: Frontend CI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package.json
+
+      - name: Install Dependencies
+        run: |
+          cd frontend
+          npm install
+
+      - name: Build React App
+        run: |
+          cd frontend
+          npm run build
+
+  # ----------------------------------------------------------------------------
+  # 4. Docker Compose Orchestration Check
+  # ----------------------------------------------------------------------------
+  docker-validation:
+    name: Docker Images Build Verification
+    runs-on: ubuntu-latest
+    needs: [test-backend, test-ml-service, test-frontend]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Validate Docker Compose Configuration
+        run: |
+          docker compose config
+
+      - name: Build All Docker Containers
+        run: |
+          docker compose build

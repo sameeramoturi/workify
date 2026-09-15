@@ -1,0 +1,42 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "WorkifyS3MediaAccess",
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:PutObjectAcl",
+        "s3:GetObject",
+        "s3:GetObjectAcl",
+        "s3:DeleteObject",
+        "s3:ListBucket"
+      ],
+      "Resource": [
+        "arn:aws:s3:::workify-media-storage",
+        "arn:aws:s3:::workify-media-storage/*"
+      ]
+    },
+    {
+      "Sid": "WorkifyCloudWatchLogsAccess",
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents",
+        "logs:DescribeLogStreams"
+      ],
+      "Resource": [
+        "arn:aws:logs:*:*:log-group:/aws/workify/*"
+      ]
+    },
+    {
+      "Sid": "WorkifyCloudWatchMetrics",
+      "Effect": "Allow",
+      "Action": [
+        "cloudwatch:PutMetricData"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
