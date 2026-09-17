@@ -13,7 +13,11 @@ import {
   Map as MapIcon,
   List,
   SlidersHorizontal,
-  ChevronRight
+  ChevronRight,
+  ChevronDown,
+  Check,
+  RotateCcw,
+  X
 } from 'lucide-react';
 
 export default function FindWorkers() {
@@ -24,9 +28,46 @@ export default function FindWorkers() {
   const [workers, setWorkers] = useState(INITIAL_WORKERS);
   const [viewMode, setViewMode] = useState('both'); // 'both', 'list', 'map'
 
+  // Interactive Filter States
+  const [minRating, setMinRating] = useState(0);
+  const [minExperience, setMinExperience] = useState(0);
+  const [priceFilter, setPriceFilter] = useState('All');
+  const [maxDistance, setMaxDistance] = useState(10);
+  const [sortBy, setSortBy] = useState('recommended');
+  const [openDropdown, setOpenDropdown] = useState(null); // 'rating', 'experience', 'price', 'distance', 'sort'
+
   useEffect(() => {
     fetchWorkers({ category: selectedCategory, city: locationText, availability: selectedAvailability }).then(setWorkers);
   }, [selectedCategory, locationText, selectedAvailability]);
+
+  // Compute filtered & sorted workers dynamically
+  const filteredWorkers = workers.filter(w => {
+    if (minRating > 0 && w.rating < minRating) return false;
+    if (minExperience > 0 && w.experience_years < minExperience) return false;
+    if (priceFilter === 'under-400' && w.hourly_rate >= 400) return false;
+    if (priceFilter === '400-500' && (w.hourly_rate < 400 || w.hourly_rate > 500)) return false;
+    if (priceFilter === 'above-500' && w.hourly_rate <= 500) return false;
+    if (maxDistance < 10 && w.distance_km > maxDistance) return false;
+    return true;
+  }).sort((a, b) => {
+    if (sortBy === 'distance') return a.distance_km - b.distance_km;
+    if (sortBy === 'rating') return b.rating - a.rating;
+    if (sortBy === 'price-asc') return a.hourly_rate - b.hourly_rate;
+    if (sortBy === 'price-desc') return b.hourly_rate - a.hourly_rate;
+    if (sortBy === 'experience') return b.experience_years - a.experience_years;
+    return 0;
+  });
+
+  const hasActiveFilters = minRating > 0 || minExperience > 0 || priceFilter !== 'All' || maxDistance < 10 || sortBy !== 'recommended';
+
+  const resetFilters = () => {
+    setMinRating(0);
+    setMinExperience(0);
+    setPriceFilter('All');
+    setMaxDistance(10);
+    setSortBy('recommended');
+    setOpenDropdown(null);
+  };
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc' }}>
@@ -126,26 +167,333 @@ export default function FindWorkers() {
               </div>
             </div>
 
-            {/* Filter Pills */}
-            <div style={{ display: 'flex', gap: '10px', alignItems: 'center', paddingTop: '12px', borderTop: '1px solid #f1f5f9' }}>
-              <button className="btn btn-outline" style={{ padding: '6px 12px', fontSize: '13px' }}>
-                <Filter size={14} /> Filters
-              </button>
-              <button className="btn btn-outline" style={{ padding: '6px 12px', fontSize: '13px' }}>
-                ⭐ Rating
-              </button>
-              <button className="btn btn-outline" style={{ padding: '6px 12px', fontSize: '13px' }}>
-                💼 Experience
-              </button>
-              <button className="btn btn-outline" style={{ padding: '6px 12px', fontSize: '13px' }}>
-                ₹ Price Range
-              </button>
-              <button className="btn btn-outline" style={{ padding: '6px 12px', fontSize: '13px' }}>
-                📍 Distance
-              </button>
-              <button className="btn btn-outline" style={{ padding: '6px 12px', fontSize: '13px', marginLeft: 'auto' }}>
-                <SlidersHorizontal size={14} /> Sort By
-              </button>
+            {/* Filter Pills with Interactive Dropdowns */}
+            <div style={{ display: 'flex', gap: '10px', alignItems: 'center', paddingTop: '12px', borderTop: '1px solid #f1f5f9', flexWrap: 'wrap', position: 'relative' }}>
+              {/* Rating Dropdown */}
+              <div style={{ position: 'relative' }}>
+                <button
+                  type="button"
+                  onClick={() => setOpenDropdown(openDropdown === 'rating' ? null : 'rating')}
+                  className="btn btn-outline"
+                  style={{
+                    padding: '6px 12px',
+                    fontSize: '13px',
+                    backgroundColor: minRating > 0 ? '#eff6ff' : '#fff',
+                    borderColor: minRating > 0 ? '#2563eb' : '#cbd5e1',
+                    color: minRating > 0 ? '#2563eb' : '#334155',
+                    fontWeight: minRating > 0 ? '700' : '500'
+                  }}
+                >
+                  ⭐ {minRating > 0 ? `${minRating}+ Stars` : 'Rating'} <ChevronDown size={14} />
+                </button>
+                {openDropdown === 'rating' && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '100%',
+                    left: 0,
+                    marginTop: '6px',
+                    width: '190px',
+                    backgroundColor: '#ffffff',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '10px',
+                    boxShadow: '0 10px 25px rgba(0,0,0,0.12)',
+                    zIndex: 100,
+                    padding: '6px 0'
+                  }}>
+                    {[
+                      { label: 'All Ratings', value: 0 },
+                      { label: '⭐ 4.5+ (Top Rated)', value: 4.5 },
+                      { label: '⭐ 4.0+ & Above', value: 4.0 },
+                      { label: '⭐ 3.5+ & Above', value: 3.5 },
+                    ].map(opt => (
+                      <div
+                        key={opt.value}
+                        onClick={() => { setMinRating(opt.value); setOpenDropdown(null); }}
+                        style={{
+                          padding: '8px 14px',
+                          fontSize: '13px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          backgroundColor: minRating === opt.value ? '#eff6ff' : 'transparent',
+                          color: minRating === opt.value ? '#2563eb' : '#334155',
+                          fontWeight: minRating === opt.value ? '700' : '400'
+                        }}
+                      >
+                        <span>{opt.label}</span>
+                        {minRating === opt.value && <Check size={14} color="#2563eb" />}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Experience Dropdown */}
+              <div style={{ position: 'relative' }}>
+                <button
+                  type="button"
+                  onClick={() => setOpenDropdown(openDropdown === 'experience' ? null : 'experience')}
+                  className="btn btn-outline"
+                  style={{
+                    padding: '6px 12px',
+                    fontSize: '13px',
+                    backgroundColor: minExperience > 0 ? '#eff6ff' : '#fff',
+                    borderColor: minExperience > 0 ? '#2563eb' : '#cbd5e1',
+                    color: minExperience > 0 ? '#2563eb' : '#334155',
+                    fontWeight: minExperience > 0 ? '700' : '500'
+                  }}
+                >
+                  💼 {minExperience > 0 ? `${minExperience}+ Yrs Exp` : 'Experience'} <ChevronDown size={14} />
+                </button>
+                {openDropdown === 'experience' && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '100%',
+                    left: 0,
+                    marginTop: '6px',
+                    width: '210px',
+                    backgroundColor: '#ffffff',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '10px',
+                    boxShadow: '0 10px 25px rgba(0,0,0,0.12)',
+                    zIndex: 100,
+                    padding: '6px 0'
+                  }}>
+                    {[
+                      { label: 'Any Experience', value: 0 },
+                      { label: '3+ Years Experience', value: 3 },
+                      { label: '5+ Years (Senior)', value: 5 },
+                      { label: '7+ Years (Master / Expert)', value: 7 },
+                    ].map(opt => (
+                      <div
+                        key={opt.value}
+                        onClick={() => { setMinExperience(opt.value); setOpenDropdown(null); }}
+                        style={{
+                          padding: '8px 14px',
+                          fontSize: '13px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          backgroundColor: minExperience === opt.value ? '#eff6ff' : 'transparent',
+                          color: minExperience === opt.value ? '#2563eb' : '#334155',
+                          fontWeight: minExperience === opt.value ? '700' : '400'
+                        }}
+                      >
+                        <span>{opt.label}</span>
+                        {minExperience === opt.value && <Check size={14} color="#2563eb" />}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Price Range Dropdown */}
+              <div style={{ position: 'relative' }}>
+                <button
+                  type="button"
+                  onClick={() => setOpenDropdown(openDropdown === 'price' ? null : 'price')}
+                  className="btn btn-outline"
+                  style={{
+                    padding: '6px 12px',
+                    fontSize: '13px',
+                    backgroundColor: priceFilter !== 'All' ? '#eff6ff' : '#fff',
+                    borderColor: priceFilter !== 'All' ? '#2563eb' : '#cbd5e1',
+                    color: priceFilter !== 'All' ? '#2563eb' : '#334155',
+                    fontWeight: priceFilter !== 'All' ? '700' : '500'
+                  }}
+                >
+                  ₹ {priceFilter === 'under-400' ? '< ₹400/hr' : priceFilter === '400-500' ? '₹400-500/hr' : priceFilter === 'above-500' ? '> ₹500/hr' : 'Price Range'} <ChevronDown size={14} />
+                </button>
+                {openDropdown === 'price' && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '100%',
+                    left: 0,
+                    marginTop: '6px',
+                    width: '220px',
+                    backgroundColor: '#ffffff',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '10px',
+                    boxShadow: '0 10px 25px rgba(0,0,0,0.12)',
+                    zIndex: 100,
+                    padding: '6px 0'
+                  }}>
+                    {[
+                      { label: 'All Prices', value: 'All' },
+                      { label: 'Budget (Under ₹400/hr)', value: 'under-400' },
+                      { label: 'Standard (₹400 - ₹500/hr)', value: '400-500' },
+                      { label: 'Premium (Above ₹500/hr)', value: 'above-500' },
+                    ].map(opt => (
+                      <div
+                        key={opt.value}
+                        onClick={() => { setPriceFilter(opt.value); setOpenDropdown(null); }}
+                        style={{
+                          padding: '8px 14px',
+                          fontSize: '13px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          backgroundColor: priceFilter === opt.value ? '#eff6ff' : 'transparent',
+                          color: priceFilter === opt.value ? '#2563eb' : '#334155',
+                          fontWeight: priceFilter === opt.value ? '700' : '400'
+                        }}
+                      >
+                        <span>{opt.label}</span>
+                        {priceFilter === opt.value && <Check size={14} color="#2563eb" />}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Distance Dropdown */}
+              <div style={{ position: 'relative' }}>
+                <button
+                  type="button"
+                  onClick={() => setOpenDropdown(openDropdown === 'distance' ? null : 'distance')}
+                  className="btn btn-outline"
+                  style={{
+                    padding: '6px 12px',
+                    fontSize: '13px',
+                    backgroundColor: maxDistance < 10 ? '#eff6ff' : '#fff',
+                    borderColor: maxDistance < 10 ? '#2563eb' : '#cbd5e1',
+                    color: maxDistance < 10 ? '#2563eb' : '#334155',
+                    fontWeight: maxDistance < 10 ? '700' : '500'
+                  }}
+                >
+                  📍 {maxDistance < 10 ? `< ${maxDistance} km` : 'Distance'} <ChevronDown size={14} />
+                </button>
+                {openDropdown === 'distance' && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '100%',
+                    left: 0,
+                    marginTop: '6px',
+                    width: '200px',
+                    backgroundColor: '#ffffff',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '10px',
+                    boxShadow: '0 10px 25px rgba(0,0,0,0.12)',
+                    zIndex: 100,
+                    padding: '6px 0'
+                  }}>
+                    {[
+                      { label: 'Any Distance (Up to 10 km)', value: 10 },
+                      { label: 'Nearby (Within 3 km)', value: 3 },
+                      { label: 'Within 5 km', value: 5 },
+                      { label: 'Within 7 km', value: 7 },
+                    ].map(opt => (
+                      <div
+                        key={opt.value}
+                        onClick={() => { setMaxDistance(opt.value); setOpenDropdown(null); }}
+                        style={{
+                          padding: '8px 14px',
+                          fontSize: '13px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          backgroundColor: maxDistance === opt.value ? '#eff6ff' : 'transparent',
+                          color: maxDistance === opt.value ? '#2563eb' : '#334155',
+                          fontWeight: maxDistance === opt.value ? '700' : '400'
+                        }}
+                      >
+                        <span>{opt.label}</span>
+                        {maxDistance === opt.value && <Check size={14} color="#2563eb" />}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Reset All Filters Button */}
+              {hasActiveFilters && (
+                <button
+                  type="button"
+                  onClick={resetFilters}
+                  className="btn btn-outline"
+                  style={{
+                    padding: '6px 12px',
+                    fontSize: '12px',
+                    color: '#ef4444',
+                    borderColor: '#fca5a5',
+                    backgroundColor: '#fff5f5'
+                  }}
+                >
+                  <RotateCcw size={13} /> Reset Filters
+                </button>
+              )}
+
+              {/* Sort By Dropdown */}
+              <div style={{ position: 'relative', marginLeft: 'auto' }}>
+                <button
+                  type="button"
+                  onClick={() => setOpenDropdown(openDropdown === 'sort' ? null : 'sort')}
+                  className="btn btn-outline"
+                  style={{
+                    padding: '6px 12px',
+                    fontSize: '13px',
+                    backgroundColor: sortBy !== 'recommended' ? '#eff6ff' : '#fff',
+                    borderColor: sortBy !== 'recommended' ? '#2563eb' : '#cbd5e1',
+                    color: sortBy !== 'recommended' ? '#2563eb' : '#334155',
+                    fontWeight: sortBy !== 'recommended' ? '700' : '500'
+                  }}
+                >
+                  <SlidersHorizontal size={14} /> Sort By: {
+                    sortBy === 'distance' ? 'Nearest' :
+                    sortBy === 'rating' ? 'Top Rated' :
+                    sortBy === 'price-asc' ? 'Lowest Price' :
+                    sortBy === 'price-desc' ? 'Highest Price' :
+                    sortBy === 'experience' ? 'Most Exp' : 'AI Match'
+                  } <ChevronDown size={14} />
+                </button>
+                {openDropdown === 'sort' && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '100%',
+                    right: 0,
+                    marginTop: '6px',
+                    width: '230px',
+                    backgroundColor: '#ffffff',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '10px',
+                    boxShadow: '0 10px 25px rgba(0,0,0,0.12)',
+                    zIndex: 100,
+                    padding: '6px 0'
+                  }}>
+                    {[
+                      { label: '✨ AI Match (Default)', value: 'recommended' },
+                      { label: '📍 Distance: Nearest First', value: 'distance' },
+                      { label: '⭐ Rating: High to Low', value: 'rating' },
+                      { label: '💰 Price: Low to High', value: 'price-asc' },
+                      { label: '💎 Price: High to Low', value: 'price-desc' },
+                      { label: '💼 Experience: Most Experienced', value: 'experience' },
+                    ].map(opt => (
+                      <div
+                        key={opt.value}
+                        onClick={() => { setSortBy(opt.value); setOpenDropdown(null); }}
+                        style={{
+                          padding: '8px 14px',
+                          fontSize: '13px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          backgroundColor: sortBy === opt.value ? '#eff6ff' : 'transparent',
+                          color: sortBy === opt.value ? '#2563eb' : '#334155',
+                          fontWeight: sortBy === opt.value ? '700' : '400'
+                        }}
+                      >
+                        <span>{opt.label}</span>
+                        {sortBy === opt.value && <Check size={14} color="#2563eb" />}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -155,12 +503,26 @@ export default function FindWorkers() {
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                 <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#1e293b' }}>
-                  Available Workers ({workers.length} found)
+                  Available Workers ({filteredWorkers.length} found)
                 </h3>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
-                {workers.map((worker) => (
+              {filteredWorkers.length === 0 ? (
+                <div className="card" style={{ padding: '36px', textAlign: 'center' }}>
+                  <div style={{ fontSize: '36px', marginBottom: '10px' }}>🔍</div>
+                  <h4 style={{ fontSize: '16px', fontWeight: '700', color: '#0f172a', marginBottom: '6px' }}>
+                    No workers match your filter criteria
+                  </h4>
+                  <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '16px' }}>
+                    Try relaxing your rating, experience, or price filters to see more workers.
+                  </p>
+                  <button onClick={resetFilters} className="btn btn-primary" style={{ padding: '8px 18px', fontSize: '13px' }}>
+                    <RotateCcw size={14} /> Reset All Filters
+                  </button>
+                </div>
+              ) : (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
+                  {filteredWorkers.map((worker) => (
                   <div key={worker.id} className="card" style={{ padding: '18px' }}>
                     <div style={{ display: 'flex', gap: '12px', marginBottom: '12px' }}>
                       <div style={{
