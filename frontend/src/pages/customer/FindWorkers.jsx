@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar';
+import InteractiveMap from '../../components/InteractiveMap';
+import { RAJAHMUNDRY_LOCALITIES, ANDHRA_PRADESH_CITIES } from '../../data/locations';
 import { fetchWorkers, INITIAL_WORKERS } from '../../services/api';
 import {
   Search,
@@ -12,11 +14,13 @@ import {
   ShieldCheck,
   Map as MapIcon,
   List,
+  Columns,
   SlidersHorizontal,
   ChevronRight,
   ChevronDown,
   Check,
   RotateCcw,
+  Sparkles,
   X
 } from 'lucide-react';
 
@@ -24,9 +28,12 @@ export default function FindWorkers() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'All');
   const [locationText, setLocationText] = useState(searchParams.get('city') || 'Rajahmundry');
+  const [selectedLocality, setSelectedLocality] = useState('All');
   const [selectedAvailability, setSelectedAvailability] = useState('Anytime');
   const [workers, setWorkers] = useState(INITIAL_WORKERS);
   const [viewMode, setViewMode] = useState('both'); // 'both', 'list', 'map'
+  const [hoveredWorkerId, setHoveredWorkerId] = useState(null);
+  const [selectedWorkerId, setSelectedWorkerId] = useState(null);
 
   // Interactive Filter States
   const [minRating, setMinRating] = useState(0);
@@ -37,8 +44,13 @@ export default function FindWorkers() {
   const [openDropdown, setOpenDropdown] = useState(null); // 'rating', 'experience', 'price', 'distance', 'sort'
 
   useEffect(() => {
-    fetchWorkers({ category: selectedCategory, city: locationText, availability: selectedAvailability }).then(setWorkers);
-  }, [selectedCategory, locationText, selectedAvailability]);
+    fetchWorkers({
+      category: selectedCategory,
+      city: locationText,
+      locality: selectedLocality,
+      availability: selectedAvailability
+    }).then(setWorkers);
+  }, [selectedCategory, locationText, selectedLocality, selectedAvailability]);
 
   // Compute filtered & sorted workers dynamically
   const filteredWorkers = workers.filter(w => {
@@ -130,16 +142,27 @@ export default function FindWorkers() {
 
               <div>
                 <label style={{ fontSize: '12px', fontWeight: '600', color: '#64748b', display: 'block', marginBottom: '6px' }}>
-                  Location
+                  Location & Locality
                 </label>
-                <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '0 10px' }}>
-                  <MapPin size={16} color="#64748b" />
-                  <input
-                    type="text"
-                    value={locationText}
-                    onChange={(e) => setLocationText(e.target.value)}
-                    style={{ width: '100%', padding: '10px 8px', border: 'none', outline: 'none', fontSize: '14px' }}
-                  />
+                <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '0 8px', backgroundColor: '#ffffff' }}>
+                  <MapPin size={16} color="#2563eb" style={{ flexShrink: 0 }} />
+                  <select
+                    value={selectedLocality}
+                    onChange={(e) => setSelectedLocality(e.target.value)}
+                    style={{ width: '100%', padding: '10px 6px', border: 'none', outline: 'none', fontSize: '14px', backgroundColor: 'transparent', cursor: 'pointer' }}
+                  >
+                    <option value="All">📍 All Localities in Rajahmundry ({workers.length})</option>
+                    <optgroup label="Popular Rajahmundry Localities">
+                      {RAJAHMUNDRY_LOCALITIES.map(l => (
+                        <option key={l.id} value={l.name}>📍 {l.name} ({l.pincode})</option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="Surrounding AP Cities">
+                      {ANDHRA_PRADESH_CITIES.map(c => (
+                        <option key={c.id} value={c.name}>🏙️ {c.name} ({c.district})</option>
+                      ))}
+                    </optgroup>
+                  </select>
                 </div>
               </div>
 
@@ -167,6 +190,62 @@ export default function FindWorkers() {
                   <Search size={16} /> Search
                 </button>
               </div>
+            </div>
+
+            {/* Quick Locality Filter Chips */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              overflowX: 'auto',
+              paddingBottom: '10px',
+              borderBottom: '1px solid #f1f5f9',
+              marginBottom: '10px',
+              scrollbarWidth: 'none'
+            }}>
+              <span style={{ fontSize: '12px', fontWeight: '700', color: '#64748b', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <MapPin size={13} color="#2563eb" /> Rajahmundry Localities:
+              </span>
+              <button
+                type="button"
+                onClick={() => setSelectedLocality('All')}
+                style={{
+                  padding: '4px 10px',
+                  borderRadius: '9999px',
+                  fontSize: '11px',
+                  fontWeight: selectedLocality === 'All' ? '700' : '500',
+                  border: 'none',
+                  backgroundColor: selectedLocality === 'All' ? '#2563eb' : '#f1f5f9',
+                  color: selectedLocality === 'All' ? '#ffffff' : '#475569',
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                All Localities ({workers.length})
+              </button>
+              {RAJAHMUNDRY_LOCALITIES.slice(0, 10).map(loc => {
+                const isSelected = selectedLocality === loc.name;
+                return (
+                  <button
+                    key={loc.id}
+                    type="button"
+                    onClick={() => setSelectedLocality(loc.name)}
+                    style={{
+                      padding: '4px 10px',
+                      borderRadius: '9999px',
+                      fontSize: '11px',
+                      fontWeight: isSelected ? '700' : '500',
+                      border: 'none',
+                      backgroundColor: isSelected ? '#2563eb' : '#f1f5f9',
+                      color: isSelected ? '#ffffff' : '#475569',
+                      cursor: 'pointer',
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    {loc.name}
+                  </button>
+                );
+              })}
             </div>
 
             {/* Filter Pills with Interactive Dropdowns */}
@@ -499,253 +578,394 @@ export default function FindWorkers() {
             </div>
           </div>
 
-          {/* Main Content Grid: Workers List (Left) + Interactive Map & Perks (Right) */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '24px', alignItems: 'start' }}>
-            {/* Left Column: Worker Cards Grid */}
+          {/* View Mode Switcher Header */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#1e293b' }}>
-                  Available Workers ({filteredWorkers.length} found)
-                </h3>
+              <h3 style={{ fontSize: '18px', fontWeight: '800', color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span>Available Workers</span>
+                <span style={{ fontSize: '12px', fontWeight: '700', backgroundColor: '#dbeafe', color: '#1e40af', padding: '2px 8px', borderRadius: '9999px' }}>
+                  {filteredWorkers.length} found in {selectedLocality === 'All' ? 'Rajahmundry' : selectedLocality}
+                </span>
+              </h3>
+              <p style={{ fontSize: '13px', color: '#64748b', margin: '4px 0 0 0' }}>
+                Verified tradesmen near your locality with live GPS radar tracking
+              </p>
+            </div>
+
+            {/* View Mode Switcher Buttons */}
+            <div style={{ display: 'flex', gap: '6px', backgroundColor: '#ffffff', padding: '4px', borderRadius: '10px', border: '1px solid #cbd5e1' }}>
+              <button
+                type="button"
+                onClick={() => setViewMode('both')}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '6px 14px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  backgroundColor: viewMode === 'both' ? '#2563eb' : 'transparent',
+                  color: viewMode === 'both' ? '#ffffff' : '#475569',
+                  transition: 'all 0.15s ease'
+                }}
+              >
+                <Columns size={15} /> Split View
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setViewMode('map')}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '6px 14px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  backgroundColor: viewMode === 'map' ? '#2563eb' : 'transparent',
+                  color: viewMode === 'map' ? '#ffffff' : '#475569',
+                  transition: 'all 0.15s ease'
+                }}
+              >
+                <MapIcon size={15} /> Full Map View
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setViewMode('list')}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '6px 14px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  backgroundColor: viewMode === 'list' ? '#2563eb' : 'transparent',
+                  color: viewMode === 'list' ? '#ffffff' : '#475569',
+                  transition: 'all 0.15s ease'
+                }}
+              >
+                <List size={15} /> List Only
+              </button>
+            </div>
+          </div>
+
+          {/* VIEW MODE: FULL MAP VIEW */}
+          {viewMode === 'map' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <InteractiveMap
+                workers={filteredWorkers}
+                selectedWorkerId={hoveredWorkerId || selectedWorkerId}
+                onSelectWorker={(w) => setSelectedWorkerId(w.id)}
+                height="560px"
+                showLocalityChips={true}
+              />
+
+              {/* Bottom Quick Worker Carousel */}
+              <div>
+                <h4 style={{ fontSize: '15px', fontWeight: '700', marginBottom: '12px', color: '#1e293b' }}>
+                  Quick Dispatch from Map ({filteredWorkers.length} Workers Available)
+                </h4>
+                <div style={{
+                  display: 'flex',
+                  gap: '16px',
+                  overflowX: 'auto',
+                  paddingBottom: '12px'
+                }}>
+                  {filteredWorkers.map(w => (
+                    <div
+                      key={w.id}
+                      onClick={() => setSelectedWorkerId(w.id)}
+                      onMouseEnter={() => setHoveredWorkerId(w.id)}
+                      onMouseLeave={() => setHoveredWorkerId(null)}
+                      className="card"
+                      style={{
+                        minWidth: '280px',
+                        maxWidth: '280px',
+                        padding: '16px',
+                        cursor: 'pointer',
+                        border: (selectedWorkerId === w.id || hoveredWorkerId === w.id) ? '2px solid #2563eb' : '1px solid #e2e8f0',
+                        backgroundColor: (selectedWorkerId === w.id || hoveredWorkerId === w.id) ? '#eff6ff' : '#ffffff',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '10px' }}>
+                        <img
+                          src={w.photo || 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=100'}
+                          alt={w.name}
+                          style={{ width: '48px', height: '48px', borderRadius: '50%', objectFit: 'cover' }}
+                        />
+                        <div>
+                          <strong style={{ fontSize: '14px', color: '#0f172a', display: 'block' }}>{w.name}</strong>
+                          <span style={{ fontSize: '12px', color: '#2563eb', fontWeight: '600' }}>{w.category}</span>
+                          <div style={{ fontSize: '11px', color: '#eab308', fontWeight: '700' }}>★ {w.rating} ({w.review_count})</div>
+                        </div>
+                      </div>
+                      <div style={{ fontSize: '12px', color: '#475569', marginBottom: '8px' }}>
+                        📍 <strong>{w.locality || 'Rajahmundry'}</strong> ({w.distance_km} km away)
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                        <span style={{ fontSize: '14px', fontWeight: '800', color: '#2563eb' }}>₹{w.hourly_rate}/hr</span>
+                        <span className="badge badge-available">● {w.availability_status}</span>
+                      </div>
+                      <Link to={`/workers/${w.id}`} className="btn btn-primary" style={{ width: '100%', padding: '6px', fontSize: '12px' }}>
+                        View Profile
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* VIEW MODE: SPLIT VIEW OR LIST VIEW */}
+          {viewMode !== 'map' && (
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: viewMode === 'list' ? '1fr' : '1.35fr 1fr',
+              gap: '24px',
+              alignItems: 'start'
+            }}>
+              {/* Workers List Column */}
+              <div>
+                {filteredWorkers.length === 0 ? (
+                  <div className="card" style={{ padding: '36px', textAlign: 'center' }}>
+                    <div style={{ fontSize: '36px', marginBottom: '10px' }}>🔍</div>
+                    <h4 style={{ fontSize: '16px', fontWeight: '700', color: '#0f172a', marginBottom: '6px' }}>
+                      No workers found in this locality or criteria
+                    </h4>
+                    <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '16px' }}>
+                      Try selecting "All Localities in Rajahmundry" or resetting the filter options.
+                    </p>
+                    <button onClick={resetFilters} className="btn btn-primary" style={{ padding: '8px 18px', fontSize: '13px' }}>
+                      <RotateCcw size={14} /> Reset All Filters
+                    </button>
+                  </div>
+                ) : (
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: viewMode === 'list' ? 'repeat(3, 1fr)' : 'repeat(2, 1fr)',
+                    gap: '16px'
+                  }}>
+                    {filteredWorkers.map((worker) => {
+                      const isHovered = hoveredWorkerId === worker.id || selectedWorkerId === worker.id;
+                      return (
+                        <div
+                          key={worker.id}
+                          className="card"
+                          onMouseEnter={() => setHoveredWorkerId(worker.id)}
+                          onMouseLeave={() => setHoveredWorkerId(null)}
+                          onClick={() => setSelectedWorkerId(worker.id)}
+                          style={{
+                            padding: '18px',
+                            cursor: 'pointer',
+                            border: isHovered ? '2px solid #2563eb' : '1px solid #e2e8f0',
+                            boxShadow: isHovered ? '0 8px 24px rgba(37, 99, 235, 0.16)' : '0 1px 3px rgba(0,0,0,0.04)',
+                            transition: 'all 0.2s ease',
+                            position: 'relative'
+                          }}
+                        >
+                          <div style={{ display: 'flex', gap: '12px', marginBottom: '12px' }}>
+                            <div style={{
+                              width: '56px', height: '56px', borderRadius: '12px',
+                              backgroundColor: '#dbeafe', overflow: 'hidden', flexShrink: 0
+                            }}>
+                              <img
+                                src={worker.photo || `https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=150`}
+                                alt={worker.name}
+                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                              />
+                            </div>
+                            <div style={{ flex: 1 }}>
+                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <h4 style={{ fontSize: '15px', fontWeight: '700', color: '#0f172a' }}>
+                                  {worker.name}
+                                </h4>
+                                {worker.is_verified && (
+                                  <span className="badge badge-verified">
+                                    <ShieldCheck size={12} /> Verified
+                                  </span>
+                                )}
+                              </div>
+                              <p style={{ fontSize: '12px', color: '#64748b' }}>{worker.category}</p>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
+                                <span style={{ display: 'flex', alignItems: 'center', gap: '2px', fontSize: '12px', fontWeight: '700', color: '#eab308' }}>
+                                  <Star size={12} fill="#eab308" /> {worker.rating}
+                                </span>
+                                <span style={{ fontSize: '11px', color: '#94a3b8' }}>
+                                  ({worker.review_count} reviews)
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Stats */}
+                          <div style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            fontSize: '12px',
+                            color: '#475569',
+                            padding: '8px 0',
+                            borderTop: '1px solid #f1f5f9',
+                            borderBottom: '1px solid #f1f5f9',
+                            marginBottom: '10px'
+                          }}>
+                            <span>💼 {worker.experience_years} years exp</span>
+                            <span style={{ fontWeight: '700', color: '#0f172a' }}>₹{worker.hourly_rate}/hr</span>
+                          </div>
+
+                          {/* Location & Distance */}
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', marginBottom: '12px' }}>
+                            <span style={{ color: '#1e40af', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '3px' }}>
+                              <MapPin size={13} color="#2563eb" /> {worker.locality || 'Rajahmundry'} ({worker.distance_km} km)
+                            </span>
+                            <span className="badge badge-available">
+                              ● Available
+                            </span>
+                          </div>
+
+                          {/* Skills Chips */}
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '14px' }}>
+                            {worker.skills.slice(0, 3).map(s => (
+                              <span key={s} style={{
+                                backgroundColor: '#f1f5f9',
+                                padding: '2px 8px',
+                                borderRadius: '4px',
+                                fontSize: '11px',
+                                color: '#475569'
+                              }}>
+                                {s}
+                              </span>
+                            ))}
+                          </div>
+
+                          {/* CTA Row */}
+                          <div style={{ display: 'flex', gap: '8px' }}>
+                            <Link
+                              to={`/workers/${worker.id}`}
+                              className="btn btn-outline"
+                              style={{ flex: 1, fontSize: '13px', padding: '8px' }}
+                            >
+                              View Profile
+                            </Link>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedWorkerId(worker.id);
+                              }}
+                              className="btn"
+                              title="Focus worker on interactive map"
+                              style={{
+                                padding: '8px 10px',
+                                backgroundColor: isHovered ? '#2563eb' : '#eff6ff',
+                                color: isHovered ? '#ffffff' : '#2563eb',
+                                border: '1px solid #bfdbfe'
+                              }}
+                            >
+                              <MapPin size={15} />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
 
-              {filteredWorkers.length === 0 ? (
-                <div className="card" style={{ padding: '36px', textAlign: 'center' }}>
-                  <div style={{ fontSize: '36px', marginBottom: '10px' }}>🔍</div>
-                  <h4 style={{ fontSize: '16px', fontWeight: '700', color: '#0f172a', marginBottom: '6px' }}>
-                    No workers match your filter criteria
-                  </h4>
-                  <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '16px' }}>
-                    Try relaxing your rating, experience, or price filters to see more workers.
-                  </p>
-                  <button onClick={resetFilters} className="btn btn-primary" style={{ padding: '8px 18px', fontSize: '13px' }}>
-                    <RotateCcw size={14} /> Reset All Filters
-                  </button>
-                </div>
-              ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
-                  {filteredWorkers.map((worker) => (
-                  <div key={worker.id} className="card" style={{ padding: '18px' }}>
-                    <div style={{ display: 'flex', gap: '12px', marginBottom: '12px' }}>
-                      <div style={{
-                        width: '56px', height: '56px', borderRadius: '12px',
-                        backgroundColor: '#dbeafe', overflow: 'hidden', flexShrink: 0
-                      }}>
-                        <img
-                          src={`https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=150`}
-                          alt={worker.name}
-                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                        />
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                          <h4 style={{ fontSize: '15px', fontWeight: '700', color: '#0f172a' }}>
-                            {worker.name}
-                          </h4>
-                          {worker.is_verified && (
-                            <span className="badge badge-verified">
-                              <ShieldCheck size={12} /> Verified
-                            </span>
-                          )}
-                        </div>
-                        <p style={{ fontSize: '12px', color: '#64748b' }}>{worker.category}</p>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
-                          <span style={{ display: 'flex', alignItems: 'center', gap: '2px', fontSize: '12px', fontWeight: '700', color: '#eab308' }}>
-                            <Star size={12} fill="#eab308" /> {worker.rating}
-                          </span>
-                          <span style={{ fontSize: '11px', color: '#94a3b8' }}>
-                            ({worker.review_count} reviews)
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Stats */}
+              {/* Right Column (Sticky Map & Perks) */}
+              {viewMode === 'both' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', position: 'sticky', top: '80px' }}>
+                  {/* Live Interactive Map Card */}
+                  <div className="card" style={{ overflow: 'hidden' }}>
                     <div style={{
+                      padding: '12px 16px',
+                      backgroundColor: '#ffffff',
+                      borderBottom: '1px solid #e2e8f0',
                       display: 'flex',
-                      justifyContent: 'space-between',
-                      fontSize: '12px',
-                      color: '#475569',
-                      padding: '8px 0',
-                      borderTop: '1px solid #f1f5f9',
-                      borderBottom: '1px solid #f1f5f9',
-                      marginBottom: '10px'
+                      alignItems: 'center',
+                      justifyContent: 'space-between'
                     }}>
-                      <span>💼 {worker.experience_years} years exp</span>
-                      <span style={{ fontWeight: '700', color: '#0f172a' }}>₹{worker.hourly_rate}/hr</span>
-                    </div>
-
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', marginBottom: '12px' }}>
-                      <span style={{ color: '#64748b' }}>📍 {worker.distance_km} km away</span>
-                      <span className="badge badge-available">
-                        ● {selectedAvailability === 'Tomorrow' ? 'Available Tomorrow' :
-                           selectedAvailability === 'Day After Tomorrow' ? 'Available Day After Tomorrow' :
-                           selectedAvailability === 'This Weekend' ? 'Available Weekend' :
-                           selectedAvailability === 'Immediate' ? 'Next 2 Hours' :
-                           'Available'}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <MapIcon size={16} color="#2563eb" />
+                        <span style={{ fontSize: '13px', fontWeight: '700', color: '#0f172a' }}>
+                          Live Map: Rajahmundry & Localities
+                        </span>
+                      </div>
+                      <span style={{
+                        fontSize: '11px',
+                        color: '#059669',
+                        fontWeight: '700',
+                        backgroundColor: '#ecfdf5',
+                        padding: '2px 8px',
+                        borderRadius: '9999px'
+                      }}>
+                        ● {filteredWorkers.length} Workers Mapped
                       </span>
                     </div>
 
-                    {/* Skills Chips */}
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '14px' }}>
-                      {worker.skills.slice(0, 3).map(s => (
-                        <span key={s} style={{
-                          backgroundColor: '#f1f5f9',
-                          padding: '2px 8px',
-                          borderRadius: '4px',
-                          fontSize: '11px',
-                          color: '#475569'
-                        }}>
-                          {s}
-                        </span>
-                      ))}
-                    </div>
-
-                    {/* View Profile CTA */}
-                    <Link
-                      to={`/workers/${worker.id}`}
-                      className="btn btn-outline"
-                      style={{ width: '100%', fontSize: '13px', padding: '8px' }}
-                    >
-                      View Profile
-                    </Link>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-            {/* Right Column: Interactive Map Preview & Cards */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              {/* Map View Toggle Buttons */}
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
-                <button className="btn btn-primary" style={{ padding: '6px 14px', fontSize: '13px' }}>
-                  <MapIcon size={14} /> Map View
-                </button>
-                <button className="btn btn-outline" style={{ padding: '6px 14px', fontSize: '13px' }}>
-                  <List size={14} /> List View
-                </button>
-              </div>
-
-              {/* Stylized Map Card */}
-              <div className="card" style={{ overflow: 'hidden' }}>
-                <div style={{
-                  height: '280px',
-                  backgroundColor: '#e2e8f0',
-                  position: 'relative',
-                  backgroundImage: 'radial-gradient(#cbd5e1 1px, transparent 1px)',
-                  backgroundSize: '16px 16px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
-                  {/* Stylized River graphic representing Godavari River in Rajahmundry */}
-                  <svg width="100%" height="100%" style={{ position: 'absolute', top: 0, left: 0 }}>
-                    <path
-                      d="M 50 280 C 120 200, 200 150, 450 60"
-                      fill="none"
-                      stroke="#93c5fd"
-                      strokeWidth="32"
-                      strokeLinecap="round"
+                    {/* High Performance OpenStreetMap Leaflet Map */}
+                    <InteractiveMap
+                      workers={filteredWorkers}
+                      selectedWorkerId={hoveredWorkerId || selectedWorkerId}
+                      onSelectWorker={(w) => setSelectedWorkerId(w.id)}
+                      height="380px"
+                      showLocalityChips={true}
                     />
-                    <text x="140" y="190" fill="#3b82f6" fontSize="12" fontWeight="bold" transform="rotate(-25 140 190)">
-                      Godavari River
-                    </text>
-                  </svg>
+                  </div>
 
-                  {/* Worker Location Markers */}
-                  {[
-                    { top: '30%', left: '40%', name: 'Ramesh Das' },
-                    { top: '45%', left: '60%', name: 'Amit Verma' },
-                    { top: '65%', left: '35%', name: 'Suresh Yadav' },
-                    { top: '25%', left: '75%', name: 'Vikas Sharma' },
-                  ].map((pin, i) => (
-                    <div
-                      key={i}
-                      style={{
-                        position: 'absolute',
-                        top: pin.top,
-                        left: pin.left,
-                        transform: 'translate(-50%, -50%)',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center'
-                      }}
-                    >
-                      <div style={{
-                        backgroundColor: '#2563eb',
-                        color: '#fff',
-                        width: '24px',
-                        height: '24px',
-                        borderRadius: '50%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '11px',
-                        fontWeight: 'bold',
-                        boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
-                      }}>
-                        📍
+                  {/* Why Choose Workify */}
+                  <div className="card" style={{ padding: '20px' }}>
+                    <h4 style={{ fontSize: '15px', fontWeight: '700', marginBottom: '14px' }}>Why Choose Workify?</h4>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '13px' }}>
+                      <div style={{ display: 'flex', gap: '10px' }}>
+                        <ShieldCheck size={18} color="#2563eb" />
+                        <div>
+                          <strong style={{ display: 'block' }}>Verified Professionals</strong>
+                          <span style={{ color: '#64748b' }}>Aadhaar & Govt ITI verified tradesmen in AP</span>
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', gap: '10px' }}>
+                        <Calendar size={18} color="#2563eb" />
+                        <div>
+                          <strong style={{ display: 'block' }}>Real-time GPS Availability</strong>
+                          <span style={{ color: '#64748b' }}>Direct dispatch within your neighborhood</span>
+                        </div>
                       </div>
                     </div>
-                  ))}
+                  </div>
 
-                  {/* Rajahmundry Center Badge */}
+                  {/* Post Job Banner */}
                   <div style={{
-                    backgroundColor: '#ffffff',
-                    padding: '6px 12px',
-                    borderRadius: '9999px',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                    fontSize: '12px',
-                    fontWeight: '700',
-                    zIndex: 10
+                    backgroundColor: '#eff6ff',
+                    border: '1px solid #bfdbfe',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between'
                   }}>
-                    📍 Rajahmundry Center
-                  </div>
-                </div>
-              </div>
-
-              {/* Why Choose Workify */}
-              <div className="card" style={{ padding: '20px' }}>
-                <h4 style={{ fontSize: '15px', fontWeight: '700', marginBottom: '14px' }}>Why Choose Workify?</h4>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '13px' }}>
-                  <div style={{ display: 'flex', gap: '10px' }}>
-                    <ShieldCheck size={18} color="#2563eb" />
                     <div>
-                      <strong style={{ display: 'block' }}>Verified Professionals</strong>
-                      <span style={{ color: '#64748b' }}>All workers are background verified</span>
+                      <h4 style={{ fontSize: '14px', fontWeight: '700', color: '#1e3a8a' }}>Need a custom job?</h4>
+                      <p style={{ fontSize: '12px', color: '#3b82f6' }}>Post your requirements & let workers bid</p>
                     </div>
-                  </div>
-                  <div style={{ display: 'flex', gap: '10px' }}>
-                    <Calendar size={18} color="#2563eb" />
-                    <div>
-                      <strong style={{ display: 'block' }}>Real-time Availability</strong>
-                      <span style={{ color: '#64748b' }}>See who is available now</span>
-                    </div>
+                    <Link to="/post-job" className="btn btn-primary" style={{ padding: '8px 16px', fontSize: '13px' }}>
+                      Post Job &gt;
+                    </Link>
                   </div>
                 </div>
-              </div>
-
-              {/* Post Job Banner */}
-              <div style={{
-                backgroundColor: '#eff6ff',
-                border: '1px solid #bfdbfe',
-                borderRadius: '12px',
-                padding: '20px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between'
-              }}>
-                <div>
-                  <h4 style={{ fontSize: '14px', fontWeight: '700', color: '#1e3a8a' }}>Need a custom job?</h4>
-                  <p style={{ fontSize: '12px', color: '#3b82f6' }}>Post your requirements & let workers bid</p>
-                </div>
-                <Link to="/post-job" className="btn btn-primary" style={{ padding: '8px 16px', fontSize: '13px' }}>
-                  Post Job &gt;
-                </Link>
-              </div>
+              )}
             </div>
-          </div>
+          )}
         </main>
       </div>
     </div>

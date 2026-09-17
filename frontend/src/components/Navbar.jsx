@@ -1,8 +1,22 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Search, MapPin, Bell, User } from 'lucide-react';
+import LocationSelectorModal from './LocationSelectorModal';
 
-export default function Navbar({ showSearch = true, activeCity = "Rajahmundry" }) {
+export default function Navbar({ showSearch = true, activeCity = "Danavaipeta, Rajahmundry" }) {
+  const navigate = useNavigate();
+  const [currentLocation, setCurrentLocation] = useState(() => {
+    return localStorage.getItem('workify_location') || activeCity;
+  });
+  const [showLocationModal, setShowLocationModal] = useState(false);
+
+  const handleSelectLocation = (loc) => {
+    setCurrentLocation(loc.name);
+    localStorage.setItem('workify_location', loc.name);
+    localStorage.setItem('workify_locality', loc.locality || '');
+    localStorage.setItem('workify_city', loc.city || 'Rajahmundry');
+  };
+
   return (
     <header style={{
       display: 'flex',
@@ -15,6 +29,13 @@ export default function Navbar({ showSearch = true, activeCity = "Rajahmundry" }
       top: 0,
       zIndex: 50
     }}>
+      <LocationSelectorModal
+        isOpen={showLocationModal}
+        onClose={() => setShowLocationModal(false)}
+        selectedLocation={currentLocation}
+        onSelectLocation={handleSelectLocation}
+      />
+
       {/* Brand Logo */}
       <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
         <div style={{
@@ -52,7 +73,12 @@ export default function Navbar({ showSearch = true, activeCity = "Rajahmundry" }
           <Search size={18} style={{ position: 'absolute', left: '16px', color: '#94a3b8' }} />
           <input
             type="text"
-            placeholder="Search for services, workers or skills..."
+            placeholder="Search for services, workers or skills in Rajahmundry..."
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && e.target.value.trim()) {
+                navigate(`/workers?category=${encodeURIComponent(e.target.value.trim())}`);
+              }
+            }}
             style={{
               width: '100%',
               padding: '10px 16px 10px 44px',
@@ -68,19 +94,30 @@ export default function Navbar({ showSearch = true, activeCity = "Rajahmundry" }
 
       {/* Right Controls: Location, Notifications & Profile */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-        {/* Location Selector */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px',
-          color: '#334155',
-          fontSize: '14px',
-          fontWeight: '500',
-          cursor: 'pointer'
-        }}>
-          <MapPin size={18} color="#2563eb" />
-          <span>{activeCity}</span>
-          <span style={{ fontSize: '10px', color: '#94a3b8' }}>▼</span>
+        {/* Location Selector Trigger */}
+        <div
+          onClick={() => setShowLocationModal(true)}
+          title="Click to change location in Rajahmundry"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            color: '#1e40af',
+            backgroundColor: '#eff6ff',
+            padding: '6px 12px',
+            borderRadius: '9999px',
+            fontSize: '13px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            border: '1px solid #bfdbfe',
+            transition: 'all 0.15s ease'
+          }}
+        >
+          <MapPin size={16} color="#2563eb" />
+          <span style={{ maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {currentLocation}
+          </span>
+          <span style={{ fontSize: '10px', color: '#2563eb' }}>▼</span>
         </div>
 
         {/* Notifications */}

@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar';
+import InteractiveMap from '../../components/InteractiveMap';
+import { RAJAHMUNDRY_LOCALITIES, ANDHRA_PRADESH_CITIES } from '../../data/locations';
 import { postNewJob, dispatchJob } from '../../services/api';
 import {
   FilePlus,
@@ -27,8 +29,10 @@ export default function PostJob() {
   const [description, setDescription] = useState(
     'Need a plumber to fix the leaking pipe in my bathroom. It is a small leak and needs immediate attention.'
   );
-  const [address, setAddress] = useState('House No. 123, Danavaipeta');
+  const [address, setAddress] = useState('House No. 123, Danavaipeta Main Road');
+  const [locality, setLocality] = useState('Danavaipeta');
   const [city, setCity] = useState('Rajahmundry');
+  const [coords, setCoords] = useState({ lat: 16.9965, lng: 81.7885 });
   const [preferredDate, setPreferredDate] = useState('Today');
   const [preferredTime, setPreferredTime] = useState('10:00 AM - 12:00 PM');
   const [budget, setBudget] = useState('₹500 - 800');
@@ -218,57 +222,65 @@ export default function PostJob() {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
                   <div>
                     <label style={{ fontSize: '12px', fontWeight: '600', color: '#475569', display: 'block', marginBottom: '6px' }}>
-                      City *
+                      City / Region *
                     </label>
                     <select
                       value={city}
                       onChange={(e) => setCity(e.target.value)}
-                      style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '14px' }}
+                      style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '14px', backgroundColor: '#fff', cursor: 'pointer' }}
                     >
-                      <option value="Rajahmundry">Rajahmundry</option>
-                      <option value="Kakinada">Kakinada</option>
-                      <option value="Vijayawada">Vijayawada</option>
-                      <option value="Visakhapatnam">Visakhapatnam</option>
+                      <option value="Rajahmundry">Rajahmundry (Primary Hub)</option>
+                      {ANDHRA_PRADESH_CITIES.filter(c => c.name !== 'Rajahmundry').map(c => (
+                        <option key={c.id} value={c.name}>{c.name} ({c.district})</option>
+                      ))}
                     </select>
                   </div>
+
                   <div>
                     <label style={{ fontSize: '12px', fontWeight: '600', color: '#475569', display: 'block', marginBottom: '6px' }}>
-                      Location (Map) *
+                      Locality in Rajahmundry *
                     </label>
-                    <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '0 10px' }}>
-                      <MapPin size={16} color="#2563eb" />
-                      <input
-                        type="text"
-                        value={city}
-                        readOnly
-                        style={{ width: '100%', padding: '10px 8px', border: 'none', outline: 'none', fontSize: '14px' }}
-                      />
-                    </div>
+                    <select
+                      value={locality}
+                      onChange={(e) => {
+                        const newLocName = e.target.value;
+                        setLocality(newLocName);
+                        const matched = RAJAHMUNDRY_LOCALITIES.find(l => l.name === newLocName);
+                        if (matched) {
+                          setCoords({ lat: matched.lat, lng: matched.lng });
+                          setAddress(`Near ${matched.landmarks}, ${matched.name}`);
+                        }
+                      }}
+                      style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '14px', backgroundColor: '#fff', cursor: 'pointer' }}
+                    >
+                      {RAJAHMUNDRY_LOCALITIES.map(l => (
+                        <option key={l.id} value={l.name}>
+                          📍 {l.name} ({l.pincode})
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
 
-                {/* Map Preview Thumbnail */}
-                <div style={{
-                  height: '140px',
-                  backgroundColor: '#e2e8f0',
-                  borderRadius: '8px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  position: 'relative',
-                  overflow: 'hidden'
-                }}>
-                  <span style={{
-                    backgroundColor: '#fff',
-                    padding: '6px 14px',
-                    borderRadius: '9999px',
-                    fontSize: '12px',
-                    fontWeight: '700',
-                    color: '#0f172a',
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
-                  }}>
-                    📍 {city} Pinpoint
-                  </span>
+                {/* Real Live Map Preview of Target Service Location */}
+                <div style={{ borderRadius: '10px', overflow: 'hidden', border: '1px solid #cbd5e1', marginTop: '10px' }}>
+                  <div style={{ padding: '8px 12px', backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0', fontSize: '12px', display: 'flex', justifyContent: 'space-between', color: '#475569' }}>
+                    <span><strong>Service Dispatch Pin:</strong> {locality}, {city}</span>
+                    <span style={{ color: '#2563eb', fontWeight: '700' }}>GPS Live</span>
+                  </div>
+                  <InteractiveMap
+                    height="190px"
+                    center={[coords.lat, coords.lng]}
+                    zoom={14}
+                    showLocalityChips={false}
+                    showControls={false}
+                    singlePin={{
+                      lat: coords.lat,
+                      lng: coords.lng,
+                      title: `${locality} Service Location`,
+                      subtitle: `${address}, ${city}`
+                    }}
+                  />
                 </div>
               </div>
 

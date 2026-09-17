@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar';
+import InteractiveMap from '../../components/InteractiveMap';
 import { getWorkerById, createBooking } from '../../services/api';
 import {
   ArrowLeft,
@@ -499,20 +500,21 @@ export default function WorkerProfile() {
                     ))}
                   </div>
 
-                  <div style={{
-                    height: '160px',
-                    backgroundColor: '#e2e8f0',
-                    borderRadius: '10px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '6px',
-                    border: '1px solid #cbd5e1'
-                  }}>
-                    <MapIcon size={24} color="#2563eb" />
-                    <strong style={{ fontSize: '14px', color: '#1e293b' }}>Godavari Riverfront Coverage Zone</strong>
-                    <span style={{ fontSize: '12px', color: '#64748b' }}>Average arrival time: 20 - 35 minutes</span>
+                  {/* Live Interactive Leaflet Map showing worker base pin and 10 km radius circle */}
+                  <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid #cbd5e1' }}>
+                    <InteractiveMap
+                      center={[worker.lat || 16.9891, worker.lng || 81.7840]}
+                      zoom={13}
+                      height="300px"
+                      radiusKm={10}
+                      showLocalityChips={false}
+                      singlePin={{
+                        lat: worker.lat || 16.9891,
+                        lng: worker.lng || 81.7840,
+                        title: `${worker.name} (${worker.category})`,
+                        subtitle: `Base: ${worker.locality || 'Danavaipeta, Rajahmundry'} • 10 km Radius`
+                      }}
+                    />
                   </div>
                 </div>
               )}

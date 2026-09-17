@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { RAJAHMUNDRY_LOCALITIES } from '../../data/locations';
 import {
   Search,
   MapPin,
@@ -14,7 +15,8 @@ import {
   Snowflake,
   Sparkles,
   Settings,
-  Grid
+  Grid,
+  Map as MapIcon
 } from 'lucide-react';
 
 export default function LandingPage() {
@@ -132,19 +134,58 @@ export default function LandingPage() {
               </div>
               <div style={{ height: '24px', width: '1px', backgroundColor: '#cbd5e1' }} />
               <div style={{ display: 'flex', alignItems: 'center', flex: 1, padding: '0 12px', gap: '8px' }}>
-                <MapPin size={18} color="#94a3b8" />
+                <MapPin size={18} color="#2563eb" />
                 <input
                   type="text"
-                  placeholder="Your Location"
+                  list="rajahmundry-localities"
+                  placeholder="Locality in Rajahmundry..."
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                   style={{ border: 'none', outline: 'none', width: '100%', fontSize: '14px' }}
                 />
+                <datalist id="rajahmundry-localities">
+                  {RAJAHMUNDRY_LOCALITIES.map(l => (
+                    <option key={l.id} value={`${l.name}, Rajahmundry`} />
+                  ))}
+                </datalist>
               </div>
               <button type="submit" className="btn btn-primary" style={{ borderRadius: '9999px', padding: '10px 24px' }}>
                 Search
               </button>
             </form>
+
+            {/* Quick Locality Jump Chips */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '14px', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '12px', color: '#64748b', fontWeight: '600' }}>Popular Areas:</span>
+              {['Danavaipeta', 'Morampudi', 'Prakash Nagar', 'Aryapuram', 'Dowleswaram', 'Innespeta'].map(area => (
+                <button
+                  key={area}
+                  type="button"
+                  onClick={() => {
+                    setLocation(`${area}, Rajahmundry`);
+                    navigate(`/workers?city=${encodeURIComponent(area)}`);
+                  }}
+                  style={{
+                    backgroundColor: '#eff6ff',
+                    color: '#2563eb',
+                    border: '1px solid #dbeafe',
+                    padding: '3px 10px',
+                    borderRadius: '9999px',
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    cursor: 'pointer'
+                  }}
+                >
+                  📍 {area}
+                </button>
+              ))}
+              <Link
+                to="/workers"
+                style={{ fontSize: '12px', color: '#059669', fontWeight: '700', marginLeft: '6px', display: 'flex', alignItems: 'center', gap: '4px' }}
+              >
+                <MapIcon size={13} /> View Live Radar Map &gt;
+              </Link>
+            </div>
 
             {/* Popular Services Chips */}
             <div style={{ marginTop: '48px' }}>
