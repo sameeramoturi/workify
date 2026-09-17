@@ -27,6 +27,7 @@ export default function Sidebar() {
     { label: 'Messages', path: '/messages', icon: MessageSquare, badge: 3 },
     { label: 'Reviews', path: '/reviews', icon: Star },
     { label: 'Wallet', path: '/wallet', icon: Wallet },
+    { label: 'Join as Worker', path: '/become-worker', icon: Briefcase },
     { label: 'Profile', path: '/workers/1', icon: User },
   ];
 

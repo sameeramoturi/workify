@@ -33,64 +33,76 @@ export default function AdminDashboard() {
   const [alertMessage, setAlertMessage] = useState(null);
 
   // KYC Queue State
-  const [kycQueue, setKycQueue] = useState([
-    {
-      id: 201,
-      name: 'Ramesh Das',
-      category: 'Plumber',
-      city: 'Rajahmundry',
-      locality: 'Danavaipeta',
-      phone: '+91 98765 43210',
-      docType: 'Aadhaar Card & ITI Certificate',
-      aadhaarNo: 'XXXX-XXXX-4829',
-      certificateNo: 'ITI-AP-2017-PLM-849',
-      submittedAt: '12 Sep 2026',
-      status: 'PENDING',
-      experience: '7 years'
-    },
-    {
-      id: 202,
-      name: 'Kishore Varma',
-      category: 'Electrician',
-      city: 'Rajahmundry',
-      locality: 'Aryapuram',
-      phone: '+91 98481 22334',
-      docType: 'Aadhaar Card & Electrical Wireman License',
-      aadhaarNo: 'XXXX-XXXX-6190',
-      certificateNo: 'AP-ELEC-LIC-9241',
-      submittedAt: '13 Sep 2026',
-      status: 'PENDING',
-      experience: '6 years'
-    },
-    {
-      id: 203,
-      name: 'Mahesh Kumar',
-      category: 'AC Technician',
-      city: 'Rajahmundry',
-      locality: 'Morampudi',
-      phone: '+91 94402 78901',
-      docType: 'Aadhaar Card & HVAC Diploma',
-      aadhaarNo: 'XXXX-XXXX-3312',
-      certificateNo: 'HVAC-DIPLOMA-2019',
-      submittedAt: '14 Sep 2026',
-      status: 'PENDING',
-      experience: '5 years'
-    },
-    {
-      id: 204,
-      name: 'Lakshmi Devi',
-      category: 'Cleaner',
-      city: 'Rajahmundry',
-      locality: 'Innespeta',
-      phone: '+91 98765 99881',
-      docType: 'Aadhaar Card & Police Clearance Certificate',
-      aadhaarNo: 'XXXX-XXXX-7744',
-      certificateNo: 'PCC-RJY-2026-102',
-      submittedAt: '15 Sep 2026',
-      status: 'PENDING',
-      experience: '5 years'
+  const [kycQueue, setKycQueue] = useState(() => {
+    const defaultQueue = [
+      {
+        id: 201,
+        name: 'Ramesh Das',
+        category: 'Plumber',
+        city: 'Rajahmundry',
+        locality: 'Danavaipeta',
+        phone: '+91 98765 43210',
+        docType: 'Aadhaar Card & ITI Certificate',
+        aadhaarNo: 'XXXX-XXXX-4829',
+        certificateNo: 'ITI-AP-2017-PLM-849',
+        submittedAt: '12 Sep 2026',
+        status: 'PENDING',
+        experience: '7 years'
+      },
+      {
+        id: 202,
+        name: 'Kishore Varma',
+        category: 'Electrician',
+        city: 'Rajahmundry',
+        locality: 'Aryapuram',
+        phone: '+91 98481 22334',
+        docType: 'Aadhaar Card & Electrical Wireman License',
+        aadhaarNo: 'XXXX-XXXX-6190',
+        certificateNo: 'AP-ELEC-LIC-9241',
+        submittedAt: '13 Sep 2026',
+        status: 'PENDING',
+        experience: '6 years'
+      },
+      {
+        id: 203,
+        name: 'Mahesh Kumar',
+        category: 'AC Technician',
+        city: 'Rajahmundry',
+        locality: 'Morampudi',
+        phone: '+91 94402 78901',
+        docType: 'Aadhaar Card & HVAC Diploma',
+        aadhaarNo: 'XXXX-XXXX-3312',
+        certificateNo: 'HVAC-DIPLOMA-2019',
+        submittedAt: '14 Sep 2026',
+        status: 'PENDING',
+        experience: '5 years'
+      },
+      {
+        id: 204,
+        name: 'Lakshmi Devi',
+        category: 'Cleaner',
+        city: 'Rajahmundry',
+        locality: 'Innespeta',
+        phone: '+91 98765 99881',
+        docType: 'Aadhaar Card & Police Clearance Certificate',
+        aadhaarNo: 'XXXX-XXXX-7744',
+        certificateNo: 'PCC-RJY-2026-102',
+        submittedAt: '15 Sep 2026',
+        status: 'PENDING',
+        experience: '5 years'
+      }
+    ];
+
+    try {
+      const saved = JSON.parse(localStorage.getItem('workify_pending_workers') || '[]');
+      if (Array.isArray(saved) && saved.length > 0) {
+        return [...saved, ...defaultQueue];
+      }
+    } catch (e) {
+      console.error('Error loading pending workers:', e);
     }
-  ]);
+    return defaultQueue;
+  });
 
   // Document Inspection Modal State
   const [inspectingItem, setInspectingItem] = useState(null);

@@ -134,6 +134,28 @@ export default function Navbar({ showSearch = true, activeCity = "Danavaipeta, R
           <span style={{ fontSize: '10px', color: '#2563eb' }}>▼</span>
         </div>
 
+        {/* Join as Worker CTA */}
+        <Link
+          to="/become-worker"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            color: '#92400e',
+            backgroundColor: '#fffbeb',
+            border: '1px solid #fde68a',
+            padding: '6px 12px',
+            borderRadius: '9999px',
+            fontSize: '12px',
+            fontWeight: '700',
+            textDecoration: 'none',
+            whiteSpace: 'nowrap'
+          }}
+        >
+          <span>🔧</span>
+          <span>Join as Worker</span>
+        </Link>
+
         {/* Notifications */}
         <div style={{ position: 'relative', cursor: 'pointer' }}>
           <Bell size={20} color="#475569" />

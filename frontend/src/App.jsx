@@ -5,6 +5,7 @@ import FindWorkers from './pages/customer/FindWorkers';
 import WorkerProfile from './pages/customer/WorkerProfile';
 import PostJob from './pages/customer/PostJob';
 import WorkerDashboard from './pages/worker/WorkerDashboard';
+import WorkerOnboarding from './pages/worker/WorkerOnboarding';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import CustomerBookings from './pages/customer/CustomerBookings';
 import CustomerMessages from './pages/customer/CustomerMessages';
@@ -33,6 +34,7 @@ export default function App() {
           <Route path="/register" element={<Login initialTab="register" />} />
 
           {/* Worker Flow */}
+          <Route path="/become-worker" element={<WorkerOnboarding />} />
           <Route path="/worker-dashboard" element={<WorkerDashboard />} />
 
           {/* Admin Flow */}
