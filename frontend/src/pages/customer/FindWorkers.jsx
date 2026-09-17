@@ -22,7 +22,7 @@ import {
 
 export default function FindWorkers() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'Plumber');
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'All');
   const [locationText, setLocationText] = useState(searchParams.get('city') || 'Rajahmundry');
   const [selectedAvailability, setSelectedAvailability] = useState('Anytime');
   const [workers, setWorkers] = useState(INITIAL_WORKERS);
@@ -115,14 +115,16 @@ export default function FindWorkers() {
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '14px' }}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '14px', backgroundColor: '#fff', cursor: 'pointer' }}
                 >
-                  <option value="Plumber">🔧 Plumber</option>
-                  <option value="Electrician">⚡ Electrician</option>
-                  <option value="Carpenter">🪚 Carpenter</option>
-                  <option value="Painter">🎨 Painter</option>
-                  <option value="AC Technician">❄️ AC Technician</option>
-                  <option value="Mechanic">⚙️ Mechanic</option>
+                  <option value="All">🌟 All Services (All Available Workers)</option>
+                  <option value="Plumber">🔧 Plumbers (Bathroom & Leak Repair)</option>
+                  <option value="Electrician">⚡ Electricians (Wiring & Inverter)</option>
+                  <option value="Carpenter">🪚 Carpenters (Furniture & Woodwork)</option>
+                  <option value="Painter">🎨 Painters (Wall & Waterproofing)</option>
+                  <option value="AC Technician">❄️ AC Technicians (Service & Gas)</option>
+                  <option value="Mechanic">⚙️ Mechanics (Bike & Car Service)</option>
+                  <option value="Cleaner">🧹 Cleaners (Deep Home & Office Cleaning)</option>
                 </select>
               </div>
 
