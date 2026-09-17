@@ -8,6 +8,7 @@ import WorkerDashboard from './pages/worker/WorkerDashboard';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import CustomerBookings from './pages/customer/CustomerBookings';
 import CustomerMessages from './pages/customer/CustomerMessages';
+import CustomerWallet from './pages/customer/CustomerWallet';
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
         <Route path="/post-job" element={<PostJob />} />
         <Route path="/bookings" element={<CustomerBookings />} />
         <Route path="/messages" element={<CustomerMessages />} />
+        <Route path="/wallet" element={<CustomerWallet />} />
         
         {/* Worker Flow */}
         <Route path="/worker-dashboard" element={<WorkerDashboard />} />
@@ -29,7 +31,6 @@ export default function App() {
 
         {/* Shortcuts for mock navigation */}
         <Route path="/reviews" element={<WorkerProfile />} />
-        <Route path="/wallet" element={<WorkerDashboard />} />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
