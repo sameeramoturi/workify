@@ -612,7 +612,8 @@ export default function FindWorkers() {
                   </div>
                 ))}
               </div>
-            </div>
+            )}
+          </div>
 
             {/* Right Column: Interactive Map Preview & Cards */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
