@@ -9,6 +9,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import CustomerBookings from './pages/customer/CustomerBookings';
 import CustomerMessages from './pages/customer/CustomerMessages';
 import CustomerWallet from './pages/customer/CustomerWallet';
+import CustomerReviews from './pages/customer/CustomerReviews';
 
 export default function App() {
   return (
@@ -22,15 +23,13 @@ export default function App() {
         <Route path="/bookings" element={<CustomerBookings />} />
         <Route path="/messages" element={<CustomerMessages />} />
         <Route path="/wallet" element={<CustomerWallet />} />
+        <Route path="/reviews" element={<CustomerReviews />} />
         
         {/* Worker Flow */}
         <Route path="/worker-dashboard" element={<WorkerDashboard />} />
 
         {/* Admin Flow */}
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
-
-        {/* Shortcuts for mock navigation */}
-        <Route path="/reviews" element={<WorkerProfile />} />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
