@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar';
-import { postNewJob } from '../../services/api';
+import { postNewJob, dispatchJob } from '../../services/api';
 import {
   FilePlus,
   MapPin,
@@ -12,7 +12,12 @@ import {
   AlertCircle,
   UploadCloud,
   CheckCircle2,
-  Sparkles
+  Sparkles,
+  Zap,
+  ArrowRight,
+  ShieldCheck,
+  Check,
+  X
 } from 'lucide-react';
 
 export default function PostJob() {
@@ -22,17 +27,22 @@ export default function PostJob() {
   const [description, setDescription] = useState(
     'Need a plumber to fix the leaking pipe in my bathroom. It is a small leak and needs immediate attention.'
   );
-  const [address, setAddress] = useState('House No. 123, Danavaipeta, Rajahmundry');
+  const [address, setAddress] = useState('House No. 123, Danavaipeta');
   const [city, setCity] = useState('Rajahmundry');
-  const [preferredDate, setPreferredDate] = useState('2025-05-25');
+  const [preferredDate, setPreferredDate] = useState('Today');
   const [preferredTime, setPreferredTime] = useState('10:00 AM - 12:00 PM');
   const [budget, setBudget] = useState('₹500 - 800');
   const [priority, setPriority] = useState('Normal');
   const [submitted, setSubmitted] = useState(false);
 
+  // AI Matchmaking & Dispatch Modal State
+  const [showDispatchModal, setShowDispatchModal] = useState(false);
+  const [dispatchStep, setDispatchStep] = useState(1);
+  const [dispatchedJob, setDispatchedJob] = useState(null);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await postNewJob({
+    const job = dispatchJob({
       category,
       subcategory,
       description,
@@ -40,14 +50,20 @@ export default function PostJob() {
       city,
       preferred_date: preferredDate,
       preferred_time: preferredTime,
+      budget,
       budget_min: 500,
       budget_max: 800,
       priority: priority.toUpperCase()
     });
-    setSubmitted(true);
-    setTimeout(() => {
-      navigate('/workers');
-    }, 2500);
+
+    setDispatchedJob(job);
+    setShowDispatchModal(true);
+    setDispatchStep(1);
+
+    // Simulate real-time matchmaking steps
+    setTimeout(() => setDispatchStep(2), 700);
+    setTimeout(() => setDispatchStep(3), 1400);
+    setTimeout(() => setDispatchStep(4), 2100);
   };
 
   return (
@@ -452,6 +468,173 @@ export default function PostJob() {
           </div>
         </main>
       </div>
+
+      {/* ============================================================== */}
+      {/* AI MATCHMAKING & DISPATCH MODAL */}
+      {/* ============================================================== */}
+      {showDispatchModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(15, 23, 42, 0.7)',
+          backdropFilter: 'blur(5px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          padding: '20px'
+        }}>
+          <div style={{
+            backgroundColor: '#ffffff',
+            borderRadius: '16px',
+            width: '100%',
+            maxWidth: '520px',
+            padding: '28px',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+            border: '1px solid #e2e8f0',
+            textAlign: 'center'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '16px' }}>
+              <Sparkles size={24} color="#2563eb" />
+              <h3 style={{ fontSize: '20px', fontWeight: '800', color: '#0f172a', margin: 0 }}>
+                AI Matchmaking & Dispatch
+              </h3>
+            </div>
+
+            {/* Live Progress Steps */}
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '12px',
+              textAlign: 'left',
+              marginBottom: '24px',
+              backgroundColor: '#f8fafc',
+              padding: '18px',
+              borderRadius: '12px',
+              border: '1px solid #e2e8f0'
+            }}>
+              {/* Step 1 */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px' }}>
+                <span style={{
+                  width: '24px', height: '24px', borderRadius: '50%',
+                  backgroundColor: dispatchStep >= 1 ? '#2563eb' : '#cbd5e1',
+                  color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '11px', fontWeight: 'bold'
+                }}>
+                  {dispatchStep > 1 ? '✓' : '1'}
+                </span>
+                <span style={{ color: dispatchStep >= 1 ? '#0f172a' : '#94a3b8', fontWeight: dispatchStep === 1 ? '700' : '500' }}>
+                  Scanning verified {category}s across Rajahmundry...
+                </span>
+              </div>
+
+              {/* Step 2 */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px' }}>
+                <span style={{
+                  width: '24px', height: '24px', borderRadius: '50%',
+                  backgroundColor: dispatchStep >= 2 ? '#2563eb' : '#cbd5e1',
+                  color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '11px', fontWeight: 'bold'
+                }}>
+                  {dispatchStep > 2 ? '✓' : '2'}
+                </span>
+                <span style={{ color: dispatchStep >= 2 ? '#0f172a' : '#94a3b8', fontWeight: dispatchStep === 2 ? '700' : '500' }}>
+                  Applying Haversine 10 km radius filter & Elo ranking...
+                </span>
+              </div>
+
+              {/* Step 3 */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px' }}>
+                <span style={{
+                  width: '24px', height: '24px', borderRadius: '50%',
+                  backgroundColor: dispatchStep >= 3 ? '#2563eb' : '#cbd5e1',
+                  color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '11px', fontWeight: 'bold'
+                }}>
+                  {dispatchStep > 3 ? '✓' : '3'}
+                </span>
+                <span style={{ color: dispatchStep >= 3 ? '#0f172a' : '#94a3b8', fontWeight: dispatchStep === 3 ? '700' : '500' }}>
+                  Optimal worker candidate matched in {city}!
+                </span>
+              </div>
+
+              {/* Step 4 */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px' }}>
+                <span style={{
+                  width: '24px', height: '24px', borderRadius: '50%',
+                  backgroundColor: dispatchStep >= 4 ? '#10b981' : '#cbd5e1',
+                  color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '11px', fontWeight: 'bold'
+                }}>
+                  {dispatchStep >= 4 ? '✓' : '4'}
+                </span>
+                <span style={{ color: dispatchStep >= 4 ? '#059669' : '#94a3b8', fontWeight: dispatchStep === 4 ? '700' : '500' }}>
+                  {dispatchStep >= 4 ? 'Dispatched! Live job alert sent to worker device.' : 'Dispatching job to worker portal...'}
+                </span>
+              </div>
+            </div>
+
+            {/* If Dispatch Complete (Step 4) */}
+            {dispatchStep >= 4 && dispatchedJob && (
+              <>
+                <div style={{
+                  backgroundColor: '#eff6ff',
+                  border: '1px solid #bfdbfe',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  marginBottom: '20px',
+                  textAlign: 'left'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <span style={{ fontSize: '12px', color: '#64748b' }}>Dispatched Job ID</span>
+                    <strong style={{ fontSize: '13px', color: '#1e40af' }}>#{dispatchedJob.id}</strong>
+                  </div>
+                  <div style={{ fontSize: '13px', color: '#1e293b', marginBottom: '4px' }}>
+                    <strong>{dispatchedJob.service}</strong> ({category})
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '8px' }}>
+                    📍 {dispatchedJob.location} • {dispatchedJob.time}
+                  </div>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '8px 12px',
+                    backgroundColor: '#fff',
+                    borderRadius: '6px',
+                    fontSize: '12px'
+                  }}>
+                    <span>Budget: <strong style={{ color: '#2563eb' }}>{dispatchedJob.budget}</strong></span>
+                    <span className="badge badge-verified">Priority: {priority}</span>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <button
+                    onClick={() => navigate('/worker-dashboard')}
+                    className="btn btn-primary"
+                    style={{ width: '100%', padding: '12px', fontSize: '14px', justifyContent: 'center' }}
+                  >
+                    <Zap size={18} /> View in Worker Portal (See Live Alert)
+                  </button>
+                  <button
+                    onClick={() => navigate('/workers')}
+                    className="btn btn-outline"
+                    style={{ width: '100%', padding: '10px', fontSize: '13px', justifyContent: 'center' }}
+                  >
+                    Browse All Workers
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
+

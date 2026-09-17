@@ -550,3 +550,98 @@ export function getBookings() {
   }
 }
 
+// -------------------------------------------------------------
+// LIVE DISPATCH & WORKER DASHBOARD UTILITIES
+// -------------------------------------------------------------
+const INITIAL_DEMO_JOBS = [
+  {
+    id: 101,
+    customer: "Sameera Rao",
+    customerPhone: "+91 98480 12345",
+    category: "Plumber",
+    service: "Pipe Repair & Leak Fixing",
+    description: "Bathroom concealed pipeline leaking into wall. Needs urgent inspection and replacement.",
+    location: "Danavaipeta, Rajahmundry",
+    distance_km: 2.3,
+    time: "Today, 2:00 PM - 4:00 PM",
+    budget: "₹650",
+    budget_amount: 650,
+    priority: "HIGH",
+    status: "PENDING",
+    otp: "5912",
+    createdAt: new Date(Date.now() - 1000 * 60 * 30).toISOString()
+  },
+  {
+    id: 102,
+    customer: "V. Kameswara Rao",
+    customerPhone: "+91 94401 56789",
+    category: "Electrician",
+    service: "Inverter & Main MCB Tripping",
+    description: "Entire first floor power cuts off whenever AC or geyser is turned on.",
+    location: "Morampudi, Rajahmundry",
+    distance_km: 3.1,
+    time: "Today, 4:30 PM - 6:30 PM",
+    budget: "₹800",
+    budget_amount: 800,
+    priority: "URGENT",
+    status: "PENDING",
+    otp: "7341",
+    createdAt: new Date(Date.now() - 1000 * 60 * 15).toISOString()
+  }
+];
+
+export function dispatchJob(jobData) {
+  try {
+    const existing = getDispatchedJobs();
+    const newJob = {
+      id: Math.floor(1000 + Math.random() * 9000),
+      customer: jobData.customer || "Sameera Moturi (You)",
+      customerPhone: jobData.customerPhone || "+91 98480 12345",
+      category: jobData.category || "Plumber",
+      service: `${jobData.subcategory || jobData.category} Issue`,
+      description: jobData.description,
+      location: `${jobData.address}, ${jobData.city || 'Rajahmundry'}`,
+      distance_km: parseFloat((Math.random() * 2.5 + 1.2).toFixed(1)),
+      time: `${jobData.preferred_date || 'Today'}, ${jobData.preferred_time || '10:00 AM - 12:00 PM'}`,
+      budget: typeof jobData.budget === 'string' ? jobData.budget : `₹${jobData.budget_min || 500} - ₹${jobData.budget_max || 800}`,
+      budget_amount: jobData.budget_max || 750,
+      priority: jobData.priority || "HIGH",
+      status: "PENDING",
+      otp: Math.floor(1000 + Math.random() * 9000).toString(),
+      createdAt: new Date().toISOString()
+    };
+    const updated = [newJob, ...existing];
+    localStorage.setItem('workify_dispatched_jobs', JSON.stringify(updated));
+    return newJob;
+  } catch (err) {
+    console.error("Error dispatching job:", err);
+    return null;
+  }
+}
+
+export function getDispatchedJobs() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('workify_dispatched_jobs') || 'null');
+    if (!saved || !Array.isArray(saved) || saved.length === 0) {
+      localStorage.setItem('workify_dispatched_jobs', JSON.stringify(INITIAL_DEMO_JOBS));
+      return INITIAL_DEMO_JOBS;
+    }
+    return saved;
+  } catch (err) {
+    return INITIAL_DEMO_JOBS;
+  }
+}
+
+export function updateDispatchedJob(jobId, updates) {
+  try {
+    const jobs = getDispatchedJobs();
+    const updated = jobs.map(j => j.id === jobId ? { ...j, ...updates } : j);
+    localStorage.setItem('workify_dispatched_jobs', JSON.stringify(updated));
+    return updated;
+  } catch (err) {
+    console.error("Error updating job:", err);
+    return [];
+  }
+}
+
+
