@@ -20,12 +20,13 @@ export default function FindWorkers() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'Plumber');
   const [locationText, setLocationText] = useState(searchParams.get('city') || 'Rajahmundry');
+  const [selectedAvailability, setSelectedAvailability] = useState('Anytime');
   const [workers, setWorkers] = useState(INITIAL_WORKERS);
   const [viewMode, setViewMode] = useState('both'); // 'both', 'list', 'map'
 
   useEffect(() => {
-    fetchWorkers({ category: selectedCategory, city: locationText }).then(setWorkers);
-  }, [selectedCategory, locationText]);
+    fetchWorkers({ category: selectedCategory, city: locationText, availability: selectedAvailability }).then(setWorkers);
+  }, [selectedCategory, locationText, selectedAvailability]);
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc' }}>
@@ -103,10 +104,18 @@ export default function FindWorkers() {
                 <label style={{ fontSize: '12px', fontWeight: '600', color: '#64748b', display: 'block', marginBottom: '6px' }}>
                   Availability
                 </label>
-                <select style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '14px' }}>
-                  <option>Anytime</option>
-                  <option>Available Today</option>
-                  <option>Next 2 Hours</option>
+                <select
+                  value={selectedAvailability}
+                  onChange={(e) => setSelectedAvailability(e.target.value)}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '14px', backgroundColor: '#ffffff', cursor: 'pointer' }}
+                >
+                  <option value="Anytime">📅 Anytime</option>
+                  <option value="Immediate">⚡ Immediate (Next 2 Hours)</option>
+                  <option value="Today">🕒 Available Today</option>
+                  <option value="Tomorrow">☀️ Tomorrow</option>
+                  <option value="Day After Tomorrow">🗓️ Day After Tomorrow</option>
+                  <option value="This Weekend">🌴 This Weekend (Sat & Sun)</option>
+                  <option value="Next Week">📆 Next Week</option>
                 </select>
               </div>
 
@@ -204,7 +213,13 @@ export default function FindWorkers() {
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', marginBottom: '12px' }}>
                       <span style={{ color: '#64748b' }}>📍 {worker.distance_km} km away</span>
-                      <span className="badge badge-available">● Available</span>
+                      <span className="badge badge-available">
+                        ● {selectedAvailability === 'Tomorrow' ? 'Available Tomorrow' :
+                           selectedAvailability === 'Day After Tomorrow' ? 'Available Day After Tomorrow' :
+                           selectedAvailability === 'This Weekend' ? 'Available Weekend' :
+                           selectedAvailability === 'Immediate' ? 'Next 2 Hours' :
+                           'Available'}
+                      </span>
                     </div>
 
                     {/* Skills Chips */}
