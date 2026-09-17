@@ -387,3 +387,166 @@ export async function postNewJob(jobData) {
   }
   return { id: Date.now(), ...jobData, status: "OPEN" };
 }
+
+// -------------------------------------------------------------
+// PROFILE & BOOKING UTILITIES
+// -------------------------------------------------------------
+const TRADE_MEDIA = {
+  Plumber: {
+    photo: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=300",
+    education: "ITI (Plumbing & Sanitation) - Govt Industrial Training Institute, Rajahmundry",
+    gallery: [
+      "https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=300",
+      "https://images.unsplash.com/photo-1505798577917-a65157d3320a?w=300",
+      "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=300",
+      "https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?w=300"
+    ],
+    reviews: [
+      { author: "K. Murali Krishna", locality: "Danavaipeta", rating: 5, date: "2 days ago", comment: "Arrived within 25 minutes! Fixed our main overhead tank pipe leakage quickly. Very clean work and polite." },
+      { author: "P. Satyanarayana", locality: "Morampudi", rating: 5, date: "1 week ago", comment: "Excellent bathroom fitting work. Charged exactly as estimated without any hidden costs." },
+      { author: "Sita Mahalakshmi", locality: "Innespeta", rating: 4.5, date: "2 weeks ago", comment: "Very professional plumber. Carried all necessary replacement washers and pipes." }
+    ]
+  },
+  Electrician: {
+    photo: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=300",
+    education: "Diploma in Electrical & Electronics Engineering - Andhra Polytechnic, Kakinada",
+    gallery: [
+      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=300",
+      "https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?w=300",
+      "https://images.unsplash.com/photo-1517420704952-d9f39e95b43e?w=300",
+      "https://images.unsplash.com/photo-1498084393753-b411b2d26b34?w=300"
+    ],
+    reviews: [
+      { author: "Rao V. S.", locality: "T-Nagar, Rajahmundry", rating: 5, date: "3 days ago", comment: "Diagnosed our inverter tripping issue in 10 minutes. Very skilled electrician." },
+      { author: "B. Venkata Rao", locality: "Aryapuram", rating: 5, date: "5 days ago", comment: "Completed 3-bedroom apartment modular switch installation neatly. Highly recommended!" },
+      { author: "Ch. Anitha", locality: "Danavaipeta", rating: 4.8, date: "2 weeks ago", comment: "Quick response for our MCB breaker change during power outage. Very trustworthy." }
+    ]
+  },
+  Carpenter: {
+    photo: "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?w=300",
+    education: "Vocational Certificate in Woodcraft & Carpentry - ITI Rajahmundry",
+    gallery: [
+      "https://images.unsplash.com/photo-1538688525198-9b88f6f53126?w=300",
+      "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=300",
+      "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=300",
+      "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300"
+    ],
+    reviews: [
+      { author: "G. Appa Rao", locality: "Kotipalli", rating: 5, date: "Yesterday", comment: "Fixed teak wood door hinges and built custom kitchen shelves. Outstanding craftsmanship." },
+      { author: "M. Subrahmanyam", locality: "Prakash Nagar", rating: 5, date: "1 week ago", comment: "Restored our vintage dining table perfectly. Very reasonable pricing." }
+    ]
+  },
+  Painter: {
+    photo: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=300",
+    education: "Certified Master Painter - Asian Paints Color Academy Certification",
+    gallery: [
+      "https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=300",
+      "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=300",
+      "https://images.unsplash.com/photo-1574359411659-15573a27fd0c?w=300",
+      "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=300"
+    ],
+    reviews: [
+      { author: "K. Haritha", locality: "Danavaipeta", rating: 5, date: "4 days ago", comment: "Flawless royal finish paint on our living room feature wall. Clean work without spills." },
+      { author: "V. Srinivas", locality: "Kambalapeta", rating: 4.7, date: "1 week ago", comment: "Waterproofing and exterior putty work was done on time." }
+    ]
+  },
+  "AC Technician": {
+    photo: "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=300",
+    education: "HVAC & Air Conditioning Certification - ITI Andhra Pradesh",
+    gallery: [
+      "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=300",
+      "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=300",
+      "https://images.unsplash.com/photo-1581092335397-9583fe92d232?w=300",
+      "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?w=300"
+    ],
+    reviews: [
+      { author: "N. Ramakrishna", locality: "Morampudi", rating: 5, date: "2 days ago", comment: "Our split AC was not cooling in summer heat. Vikram refilled gas and cleaned foam filter in 40 mins. Super chill now!" },
+      { author: "T. Bhavani", locality: "Aryapuram", rating: 5, date: "6 days ago", comment: "Very genuine technician. Didn't charge for unnecessary parts." }
+    ]
+  },
+  Mechanic: {
+    photo: "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=300",
+    education: "Automobile Engineering Diploma - Govt Polytechnic, Rajahmundry",
+    gallery: [
+      "https://images.unsplash.com/photo-1486006920555-c77dce18193b?w=300",
+      "https://images.unsplash.com/photo-1487754180451-c456f719a1fc?w=300",
+      "https://images.unsplash.com/photo-1508974239320-0a029497e820?w=300",
+      "https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?w=300"
+    ],
+    reviews: [
+      { author: "D. Prasad", locality: "Dowleswaram", rating: 5, date: "Yesterday", comment: "Bike broke down on Godavari bridge road. Arrived in 15 mins with mobile toolkit and fixed clutch wire!" },
+      { author: "P. Ravi", locality: "Danavaipeta", rating: 4.8, date: "1 week ago", comment: "Car battery jumpstart and brake pad replacement done cleanly at doorstep." }
+    ]
+  },
+  Cleaner: {
+    photo: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=300",
+    education: "Certified Professional Housekeeping & Sanitization - AP Skill Council",
+    gallery: [
+      "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=300",
+      "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?w=300",
+      "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=300",
+      "https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?w=300"
+    ],
+    reviews: [
+      { author: "Y. Vijayalakshmi", locality: "Innespeta", rating: 5, date: "3 days ago", comment: "Lakshmi and team made our 3BHK flat look brand new before housewarming! Sparkling bathrooms and kitchen." },
+      { author: "S. Mohan", locality: "Morampudi", rating: 4.9, date: "10 days ago", comment: "Thorough sofa cleaning and floor sanitization. Very polite and hard working." }
+    ]
+  }
+};
+
+export function getWorkerById(id) {
+  const parsedId = parseInt(id || '1', 10);
+  const found = INITIAL_WORKERS.find(w => w.id === parsedId) || INITIAL_WORKERS[0];
+  const defaults = TRADE_MEDIA[found.category] || TRADE_MEDIA.Plumber;
+
+  return {
+    ...found,
+    photo: found.photo || defaults.photo,
+    education: found.education || defaults.education,
+    gallery: found.gallery && found.gallery.length > 0 ? found.gallery : defaults.gallery,
+    reviews: found.reviews && found.reviews.length > 0 ? found.reviews : defaults.reviews,
+    phone_number: found.phone_number || `+91 ${Math.floor(9000000000 + (found.id * 54321) % 900000000)}`,
+    email: found.email || `${found.name.toLowerCase().replace(/[^a-z]/g, '.')}@workify.in`,
+    dob: found.dob || "15 May 1988",
+    gender: found.gender || "Male",
+    languages: found.languages || ["Telugu", "English", "Hindi"],
+    experiences: found.experiences || [
+      { year: `${2026 - found.experience_years} - Present`, role: `Senior ${found.category}`, desc: `Managing residential and commercial ${found.category.toLowerCase()} projects across Rajahmundry.` },
+      { year: `${2026 - found.experience_years - 3} - ${2026 - found.experience_years}`, role: `Apprentice & Assistant ${found.category}`, desc: `Hands-on practical training under master technicians.` }
+    ]
+  };
+}
+
+export function createBooking(data) {
+  try {
+    const existing = JSON.parse(localStorage.getItem('workify_bookings') || '[]');
+    const newBooking = {
+      id: `WK-${Math.floor(100000 + Math.random() * 900000)}`,
+      otp: Math.floor(1000 + Math.random() * 9000).toString(),
+      createdAt: new Date().toISOString(),
+      status: 'CONFIRMED',
+      ...data
+    };
+    existing.unshift(newBooking);
+    localStorage.setItem('workify_bookings', JSON.stringify(existing));
+    return newBooking;
+  } catch (err) {
+    console.error("Error creating booking:", err);
+    return {
+      id: `WK-${Math.floor(100000 + Math.random() * 900000)}`,
+      otp: "4829",
+      createdAt: new Date().toISOString(),
+      status: 'CONFIRMED',
+      ...data
+    };
+  }
+}
+
+export function getBookings() {
+  try {
+    return JSON.parse(localStorage.getItem('workify_bookings') || '[]');
+  } catch (err) {
+    return [];
+  }
+}
+
