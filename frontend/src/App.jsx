@@ -10,30 +10,38 @@ import CustomerBookings from './pages/customer/CustomerBookings';
 import CustomerMessages from './pages/customer/CustomerMessages';
 import CustomerWallet from './pages/customer/CustomerWallet';
 import CustomerReviews from './pages/customer/CustomerReviews';
+import Login from './pages/auth/Login';
+import { AuthProvider } from './context/AuthContext';
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Customer Flow */}
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/workers" element={<FindWorkers />} />
-        <Route path="/workers/:id" element={<WorkerProfile />} />
-        <Route path="/post-job" element={<PostJob />} />
-        <Route path="/bookings" element={<CustomerBookings />} />
-        <Route path="/messages" element={<CustomerMessages />} />
-        <Route path="/wallet" element={<CustomerWallet />} />
-        <Route path="/reviews" element={<CustomerReviews />} />
-        
-        {/* Worker Flow */}
-        <Route path="/worker-dashboard" element={<WorkerDashboard />} />
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Customer Flow */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/workers" element={<FindWorkers />} />
+          <Route path="/workers/:id" element={<WorkerProfile />} />
+          <Route path="/post-job" element={<PostJob />} />
+          <Route path="/bookings" element={<CustomerBookings />} />
+          <Route path="/messages" element={<CustomerMessages />} />
+          <Route path="/wallet" element={<CustomerWallet />} />
+          <Route path="/reviews" element={<CustomerReviews />} />
+          
+          {/* Auth Flow */}
+          <Route path="/login" element={<Login initialTab="login" />} />
+          <Route path="/register" element={<Login initialTab="register" />} />
 
-        {/* Admin Flow */}
-        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          {/* Worker Flow */}
+          <Route path="/worker-dashboard" element={<WorkerDashboard />} />
 
-        {/* Fallback */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </BrowserRouter>
+          {/* Admin Flow */}
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
+
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
