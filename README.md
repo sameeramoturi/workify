@@ -31,9 +31,9 @@
 | Role | Teammate | Assigned Workspace & Scope |
 | :--- | :--- | :--- |
 | **Full Stack 1** | Person 1 | **Customer Flow**: `frontend/src/pages/customer/` (Landing, Search, Job Posting), `backend/apps/jobs/`, `backend/apps/reviews/` |
-| **Full Stack 2** | Person 2 | **Worker & Admin Flow**: `frontend/src/pages/worker/`, `frontend/src/pages/admin/`, `backend/apps/workers/`, `backend/apps/authentication/` |
-| **GenAI / ML** | Person 3 | **AI & Matchmaking Engine**: `ml-service/` (FastAPI, Haversine filter, Elo engine, Collaborative filtering) |
-| **AWS / DevOps ⭐** | **YOU** | **Infrastructure & Pipelines**: `docker-compose.yml`, `devops/`, `.github/workflows/`, AWS Cloud Architecture (EC2, RDS, S3, IAM, CloudWatch) |
+| **Full Stack 2** | Person 1| **Worker & Admin Flow**: `frontend/src/pages/worker/`, `frontend/src/pages/admin/`, `backend/apps/workers/`, `backend/apps/authentication/` |
+| **GenAI / ML** | Person 2 | **AI & Matchmaking Engine**: `ml-service/` (FastAPI, Haversine filter, Elo engine, Collaborative filtering) |
+| **AWS / DevOps ⭐** | person 3 | **Infrastructure & Pipelines**: `docker-compose.yml`, `devops/`, `.github/workflows/`, AWS Cloud Architecture (EC2, RDS, S3, IAM, CloudWatch) |
 
 ---
 
