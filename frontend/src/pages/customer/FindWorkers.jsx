@@ -700,7 +700,7 @@ export default function FindWorkers() {
                     >
                       <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '10px' }}>
                         <img
-                          src={w.photo || 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=100'}
+                          src={w.photo || 'https://images.unsplash.com/photo-1540569014015-19a7be504e3a?w=100'}
                           alt={w.name}
                           style={{ width: '48px', height: '48px', borderRadius: '50%', objectFit: 'cover' }}
                         />
@@ -780,7 +780,7 @@ export default function FindWorkers() {
                               backgroundColor: '#dbeafe', overflow: 'hidden', flexShrink: 0
                             }}>
                               <img
-                                src={worker.photo || `https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=150`}
+                                src={worker.photo || `https://images.unsplash.com/photo-1540569014015-19a7be504e3a?w=150`}
                                 alt={worker.name}
                                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                               />

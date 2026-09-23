@@ -213,7 +213,7 @@ export default function InteractiveMap({
             position: relative;
             background-size: cover;
             background-position: center;
-            background-image: url('${worker.photo || "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=100"}');
+            background-image: url('${worker.photo || "https://images.unsplash.com/photo-1540569014015-19a7be504e3a?w=100"}');
           ">
             <!-- Availability Indicator Dot -->
             <span style="
@@ -273,7 +273,7 @@ export default function InteractiveMap({
         <div style="font-family: inherit; width: 220px; padding: 4px;">
           <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
             <img
-              src="${worker.photo || 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=100'}"
+              src="${worker.photo || 'https://images.unsplash.com/photo-1540569014015-19a7be504e3a?w=100'}"
               alt="${worker.name}"
               style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid #2563eb;"
             />

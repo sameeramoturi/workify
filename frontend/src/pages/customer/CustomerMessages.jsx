@@ -33,7 +33,7 @@ const INITIAL_CONVERSATIONS = [
     name: 'Ramesh Das',
     category: 'Plumber',
     locality: 'Danavaipeta, Rajahmundry',
-    photo: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=120',
+    photo: 'https://images.unsplash.com/photo-1540569014015-19a7be504e3a?w=120',
     online: true,
     lastSeen: 'Online',
     unreadCount: 1,

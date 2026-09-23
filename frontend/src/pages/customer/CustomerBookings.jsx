@@ -38,7 +38,7 @@ export default function CustomerBookings() {
       id: `JOB-${j.id}`,
       workerName: j.assignedWorker || `${j.category} Specialist`,
       workerCategory: j.category,
-      workerPhoto: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=150",
+      workerPhoto: "https://images.unsplash.com/photo-1540569014015-19a7be504e3a?w=150",
       service: j.service,
       date: j.time?.split(',')[0] || 'Today',
       timeSlot: j.time?.split(',')[1] || '10:00 AM - 12:00 PM',
@@ -229,7 +229,7 @@ export default function CustomerBookings() {
                         border: '2px solid #e2e8f0'
                       }}>
                         <img
-                          src={item.workerPhoto || "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=150"}
+                          src={item.workerPhoto || "https://images.unsplash.com/photo-1540569014015-19a7be504e3a?w=150"}
                           alt={item.workerName}
                           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                         />

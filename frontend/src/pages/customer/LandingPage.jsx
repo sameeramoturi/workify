@@ -239,13 +239,42 @@ export default function LandingPage() {
               borderRadius: '24px',
               overflow: 'hidden',
               boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
-              backgroundColor: '#dbeafe'
+              backgroundColor: '#dbeafe',
+              position: 'relative'
             }}>
               <img
-                src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=600"
-                alt="Skilled Worker"
+                src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=800"
+                alt="Skilled Worker - Electrician & Plumber"
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
+
+              {/* Bottom Gradient Overlay with Trade Badges */}
+              <div style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                padding: '24px 16px 16px',
+                background: 'linear-gradient(to top, rgba(15,23,42,0.85) 0%, transparent 100%)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between'
+              }}>
+                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                  <span style={{ backgroundColor: 'rgba(37,99,235,0.9)', color: '#fff', fontSize: '11px', fontWeight: '700', padding: '3px 8px', borderRadius: '6px' }}>
+                    🚰 Plumber
+                  </span>
+                  <span style={{ backgroundColor: 'rgba(217,119,6,0.9)', color: '#fff', fontSize: '11px', fontWeight: '700', padding: '3px 8px', borderRadius: '6px' }}>
+                    ⚡ Electrician
+                  </span>
+                  <span style={{ backgroundColor: 'rgba(16,185,129,0.9)', color: '#fff', fontSize: '11px', fontWeight: '700', padding: '3px 8px', borderRadius: '6px' }}>
+                    🪚 Carpenter
+                  </span>
+                </div>
+                <span style={{ color: '#facc15', fontSize: '12px', fontWeight: '800' }}>
+                  ★ 4.9 / 5.0
+                </span>
+              </div>
             </div>
 
             {/* Floating Badges */}
@@ -266,7 +295,7 @@ export default function LandingPage() {
               </div>
               <div>
                 <p style={{ fontSize: '12px', fontWeight: '700', margin: 0 }}>Verified</p>
-                <p style={{ fontSize: '10px', color: '#64748b', margin: 0 }}>Professionals</p>
+                <p style={{ fontSize: '10px', color: '#64748b', margin: 0 }}>Aadhaar & ITI Certified</p>
               </div>
             </div>
 
@@ -286,8 +315,8 @@ export default function LandingPage() {
                 ⚡
               </div>
               <div>
-                <p style={{ fontSize: '12px', fontWeight: '700', margin: 0 }}>Trusted by</p>
-                <p style={{ fontSize: '10px', color: '#64748b', margin: 0 }}>10,000+ Customers</p>
+                <p style={{ fontSize: '12px', fontWeight: '700', margin: 0 }}>20 Min Arrival</p>
+                <p style={{ fontSize: '10px', color: '#64748b', margin: 0 }}>Across Rajahmundry</p>
               </div>
             </div>
           </div>

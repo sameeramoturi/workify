@@ -9,6 +9,7 @@ export const INITIAL_WORKERS = [
     id: 1,
     name: "Ramesh Das",
     category: "Plumber",
+    photo: "https://images.unsplash.com/photo-1540569014015-19a7be504e3a?w=300",
     rating: 4.8,
     review_count: 124,
     experience_years: 7,
@@ -590,7 +591,7 @@ export async function postNewJob(jobData) {
 // -------------------------------------------------------------
 const TRADE_MEDIA = {
   Plumber: {
-    photo: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=300",
+    photo: "https://images.unsplash.com/photo-1540569014015-19a7be504e3a?w=300",
     education: "ITI (Plumbing & Sanitation) - Govt Industrial Training Institute, Rajahmundry",
     gallery: [
       "https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=300",
