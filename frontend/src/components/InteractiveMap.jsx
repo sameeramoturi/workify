@@ -28,28 +28,43 @@ export default function InteractiveMap({
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
-    if (!mapInstanceRef.current) {
-      const map = L.map(mapContainerRef.current, {
-        center: center,
-        zoom: zoom,
-        zoomControl: false, // We render custom modern zoom controls
-        attributionControl: false
-      });
+    try {
+      if (mapContainerRef.current._leaflet_id) {
+        mapContainerRef.current._leaflet_id = null;
+      }
 
-      // Default OpenStreetMap tiles
-      const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        subdomains: ['a', 'b', 'c']
-      }).addTo(map);
+      if (!mapInstanceRef.current) {
+        const map = L.map(mapContainerRef.current, {
+          center: center,
+          zoom: zoom,
+          zoomControl: false, // We render custom modern zoom controls
+          attributionControl: false
+        });
 
-      mapInstanceRef.current = map;
-      mapInstanceRef.current._tileLayer = tileLayer;
+        // Default OpenStreetMap tiles
+        const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          subdomains: ['a', 'b', 'c']
+        }).addTo(map);
+
+        mapInstanceRef.current = map;
+        mapInstanceRef.current._tileLayer = tileLayer;
+      }
+    } catch (err) {
+      console.warn("Leaflet map initialization warning:", err);
     }
 
     return () => {
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove();
-        mapInstanceRef.current = null;
+      try {
+        if (mapInstanceRef.current) {
+          mapInstanceRef.current.remove();
+          mapInstanceRef.current = null;
+        }
+      } catch (err) {
+        console.warn("Leaflet map cleanup warning:", err);
+      }
+      if (mapContainerRef.current) {
+        mapContainerRef.current._leaflet_id = null;
       }
     };
   }, []);

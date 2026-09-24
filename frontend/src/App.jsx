@@ -13,11 +13,13 @@ import CustomerWallet from './pages/customer/CustomerWallet';
 import CustomerReviews from './pages/customer/CustomerReviews';
 import Login from './pages/auth/Login';
 import { AuthProvider } from './context/AuthContext';
+import ErrorBoundary from './components/ErrorBoundary';
 
 export default function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
+    <ErrorBoundary>
+      <AuthProvider>
+        <BrowserRouter>
         <Routes>
           {/* Customer Flow */}
           <Route path="/" element={<LandingPage />} />
@@ -45,5 +47,6 @@ export default function App() {
         </Routes>
       </BrowserRouter>
     </AuthProvider>
+    </ErrorBoundary>
   );
 }
