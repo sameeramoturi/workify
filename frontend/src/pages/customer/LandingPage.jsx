@@ -254,7 +254,7 @@ export default function LandingPage() {
               style={{ padding: '7px 14px', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px' }}
             >
               <User size={14} />
-              <span>{currentUser.name.split(' ')[0]} ({currentUser.role})</span>
+              <span>{(currentUser?.name || 'User').split(' ')[0]} ({currentUser?.role || 'Member'})</span>
             </Link>
           ) : (
             <>

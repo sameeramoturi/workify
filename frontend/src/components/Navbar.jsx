@@ -214,7 +214,7 @@ export default function Navbar({ showSearch = true, activeCity = "Danavaipeta, R
               <div style={{ textAlign: 'left' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <p style={{ fontSize: '13px', fontWeight: '700', color: '#0f172a', margin: 0 }}>
-                    {currentUser.name.split(' ')[0]}
+                    {(currentUser?.name || 'User').split(' ')[0]}
                   </p>
                   <ChevronDown size={14} color="#64748b" />
                 </div>

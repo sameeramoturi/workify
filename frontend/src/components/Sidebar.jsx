@@ -11,7 +11,8 @@ import {
   User,
   Shield,
   Briefcase,
-  ArrowRightLeft
+  ArrowRightLeft,
+  Wrench
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
