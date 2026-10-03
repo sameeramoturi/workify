@@ -1,9 +1,10 @@
 # Workify: A Scalable Cloud-Native Framework for On-Demand Municipal Tradesman Matchmaking Using Geospatial Optimization, Bilateral Elo Dynamics, and Two-Factor Physical Authentication
 
-**Authors**: Sameera Moturi$^1$, [Co-Author 1]$^1$, [Co-Author 2]$^1$, [Faculty Guide / Supervisor]$^2$  
-$^1$Department of Computer Science and Engineering, Engineering College, Rajahmundry, Andhra Pradesh, India  
-$^2$Associate Professor / Head of Department, Department of Computer Science and Engineering  
-**Corresponding Author**: Sameera Moturi (`sameera@workify.local`)  
+**Authors**: Moturi Sameera$^1$, Bumika Savarapu$^1$, Sravanthi Matte$^1$, S. Satya Kumar$^2$  
+$^1$Department of Computer Science and Engineering (Data Science), Godavari Global University, Rajahmundry, Andhra Pradesh, India  
+$^2$Assistant Professor, Department of Computer Science and Engineering (Artificial Intelligence and Machine Learning), Godavari Global University, Rajahmundry, Andhra Pradesh, India  
+**Corresponding Author**: Moturi Sameera (`sameeramoturi27@gmail.com`)  
+**Project Guide / Supervisor**: Mr. S. Satya Kumar, Assistant Professor, Dept. of CSE (AI & ML)  
 **Target Publication Venues**: IEEE Access, Springer Nature (SN Computer Science / LNCS), Elsevier Journal of Network and Computer Applications, Scopus-Indexed International Journals  
 
 ---
