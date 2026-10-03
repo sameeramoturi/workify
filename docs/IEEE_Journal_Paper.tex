@@ -145,7 +145,11 @@ D(P_c, P_w) = R \cdot c
 
 The candidate worker pool $\mathcal{W}_{\text{candidate}}$ for customer $c$ requesting trade category $\mathcal{C}$ is strictly constrained by the bounding predicate:
 \begin{equation}
-\mathcal{W}_{\text{candidate}} = \left\{ w \in \mathcal{W} \mid \text{Cat}(w) = \mathcal{C}, \, D(P_c, P_w) \le D_{\max}, \, \text{Status}(w) = \text{AVAIL} \right\}
+\begin{aligned}
+\mathcal{W}_{\text{candidate}} = \{ w \in \mathcal{W} \mid &\; \text{Cat}(w) = \mathcal{C}, \\
+& D(P_c, P_w) \le D_{\max}, \\
+& \text{Status}(w) = \text{AVAIL} \}
+\end{aligned}
 \end{equation}
 where $D_{\max} = 10.0\text{ km}$ defines the maximum acceptable operational dispatch radius.
 
@@ -214,11 +218,11 @@ Empirical parameter calibration establishes $\sum \text{weights} = 1.0$:
 \caption{Workify Intelligent Matchmaking and Dispatch}
 \label{alg:dispatch}
 \begin{algorithmic}[1]
-\Require Customer Coordinates $P_c$, Category $\mathcal{C}$, Database $\mathcal{W}$, Radius $D_{\max} = 10.0\text{ km}$, Count $k = 5$
-\Ensure Top-$k$ Ranked Worker List $\mathcal{W}_{\text{ranked}}$
+\Require Coordinates $P_c$, Trade $\mathcal{C}$, Database $\mathcal{W}$, Radius $D_{\max} = 10\text{ km}$, Count $k = 5$
+\Ensure Ranked Worker List $\mathcal{W}_{\text{ranked}}$
 \State $\mathcal{W}_{\text{candidate}} \gets []$
 \ForAll{$w \in \mathcal{W}$}
-    \If{$w.\text{category} == \mathcal{C}$ \ \textbf{and}\ $w.\text{status} == \text{'AVAILABLE'}$}
+    \If{$w.\text{cat} == \mathcal{C}$ \ \textbf{and}\ $w.\text{status} == \text{'AVAIL'}$}
         \State $d \gets \text{ComputeHaversine}(P_c, w.\text{coords})$
         \If{$d \le D_{\max}$}
             \State $w.\text{dist} \gets d$
@@ -236,7 +240,8 @@ Empirical parameter calibration establishes $\sum \text{weights} = 1.0$:
     \State $\Phi_{\text{exp}} \gets \min(1.0, w.\text{experience} / 10.0)$
     \State $\Phi_{\text{avail}} \gets 1.0$
     \State $\Phi_{\text{cert}} \gets (w.\text{isVerified} \;?\; 1.0 : 0.5)$
-    \State $w.\text{score} \gets 0.25\Phi_{\text{dist}} + 0.20\Phi_{\text{star}} + 0.20\Phi_{\text{elo}} + 0.15\Phi_{\text{exp}} + 0.10\Phi_{\text{avail}} + 0.10\Phi_{\text{cert}}$
+    \State $w.\text{score} \gets 0.25\Phi_{\text{dist}} + 0.20\Phi_{\text{star}} + 0.20\Phi_{\text{elo}}$
+    \State \hspace{3.2em} $+ 0.15\Phi_{\text{exp}} + 0.10\Phi_{\text{avail}} + 0.10\Phi_{\text{cert}}$
 \EndFor
 \State Sort $\mathcal{W}_{\text{candidate}}$ descending by $w.\text{score}$
 \State $\mathcal{W}_{\text{ranked}} \gets \mathcal{W}_{\text{candidate}}[0 : k]$
@@ -247,7 +252,10 @@ Empirical parameter calibration establishes $\sum \text{weights} = 1.0$:
 \subsection{Zero-Trust Doorstep Verification Protocol}
 To eliminate proxy worker substitution, a cryptographically generated 4-digit arrival token is issued upon booking confirmation:
 \begin{equation}
-\text{OTP} = \text{HMAC-SHA256}(K_{\text{secret}}, \text{BookingID} \parallel \text{Timestamp}) \pmod{10^4}
+\begin{aligned}
+\text{OTP} = &\; \text{HMAC-SHA256}(K_{\text{secret}}, \\
+& \text{BookingID} \parallel \text{Timestamp}) \pmod{10^4}
+\end{aligned}
 \end{equation}
 The customer receives the token on their private authenticated mobile terminal. The technician physically inputs the customer's verbally communicated OTP into their terminal upon doorstep arrival, triggering an atomic database transition from \texttt{PENDING} to \texttt{IN\_PROGRESS} and starting the job billing clock.
 
@@ -273,16 +281,18 @@ The experimental environment was calibrated against the geographic topology of R
 \caption{Matchmaking Latency and Radial Precision Performance Across 500 Dispatch Cycles}
 \label{tab:results}
 \centering
+\resizebox{0.95\columnwidth}{!}{%
 \begin{tabular}{@{}lcccc@{}}
 \toprule
-\textbf{Model / Algorithm} & \textbf{Latency (ms)} & \textbf{P95 (ms)} & \textbf{Precision (\%)} & \textbf{Cold-Start} \\
+\textbf{Model / Algorithm} & \textbf{Latency} & \textbf{P95} & \textbf{Precision} & \textbf{Cold-Start} \\
 \midrule
 Random Allocation & 12.4 ms & 21.0 ms & 31.2\% & Poor \\
 Spatial KNN \cite{prasad2021geospatial} & 184.2 ms & 289.0 ms & 88.5\% & Moderate \\
-Collaborative Filtering (SVD) \cite{koren2009matrix} & 240.6 ms & 378.0 ms & 82.1\% & Low (Fail) \\
+Collab. Filtering (SVD) \cite{koren2009matrix} & 240.6 ms & 378.0 ms & 82.1\% & Low (Fail) \\
 \textbf{Workify (Proposed)} & \textbf{34.8 ms} & \textbf{58.2 ms} & \textbf{96.4\%} & \textbf{Robust} \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 \subsection{Latency and Precision Analysis}
