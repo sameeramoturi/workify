@@ -184,7 +184,10 @@ Let customer location be $P_c = (\phi_c, \lambda_c)$ and candidate worker locati
 \end{equation}
 Applying the spherical law of haversines with Earth radius $R = 6371.0088\text{ km}$:
 \begin{equation}
-a = \sin^2\left(\frac{\Delta\phi}{2}\right) + \cos(\phi_c)\cos(\phi_w)\sin^2\left(\frac{\Delta\lambda}{2}\right)
+\begin{aligned}
+a = &\; \sin^2\left(\frac{\Delta\phi}{2}\right) \\
+& + \cos(\phi_c)\cos(\phi_w)\sin^2\left(\frac{\Delta\lambda}{2}\right)
+\end{aligned}
 \end{equation}
 \begin{equation}
 c = 2 \cdot \arctan2\left(\sqrt{a}, \sqrt{1 - a}\right)
@@ -208,7 +211,10 @@ where $D_{\max} = 10.0\text{ km}$ enforces municipal locality boundaries.
 
 Both workers ($w$) and customers ($c$) maintain continuous ratings initialized at baseline $R_w^{(0)} = 1200$ and $R_c^{(0)} = 1200$. The expected satisfaction probability is modeled by the logistic sigmoid:
 \begin{equation}
-E_w = \frac{1}{1 + 10^{\frac{R_c - R_w}{400}}}, \quad E_c = \frac{1}{1 + 10^{\frac{R_w - R_c}{400}}}
+E_w = \frac{1}{1 + 10^{(R_c - R_w)/400}}
+\end{equation}
+\begin{equation}
+E_c = \frac{1}{1 + 10^{(R_w - R_c)/400}}
 \end{equation}
 Upon service completion, the Servicer Effort Score ($S_{\text{SES}} \in [0, 1]$) and Customer Behaviour Score ($S_{\text{CBS}} \in [0, 1]$) update ratings synchronously with damping factor $K = 32$:
 \begin{equation}
@@ -225,21 +231,25 @@ R_c^{(t+1)} = R_c^{(t)} + K \cdot (S_{\text{CBS}} - E_c)
 Candidate tradesmen are ranked using a multi-criteria utility function:
 \begin{equation}
 \begin{aligned}
-\mathcal{F}(w) = &\; \alpha \cdot \Phi_{\text{dist}}(w) + \beta \cdot \Phi_{\text{star}}(w) + \gamma \cdot \Phi_{\text{elo}}(w) \\
-& + \delta \cdot \Phi_{\text{exp}}(w) + \zeta \cdot \Phi_{\text{avail}}(w) + \eta \cdot \Phi_{\text{cert}}(w)
+\mathcal{F}(w) = &\; \alpha \cdot \Phi_{\text{dist}}(w) + \beta \cdot \Phi_{\text{star}}(w) \\
+& + \gamma \cdot \Phi_{\text{elo}}(w) + \delta \cdot \Phi_{\text{exp}}(w) \\
+& + \zeta \cdot \Phi_{\text{avail}}(w) + \eta \cdot \Phi_{\text{cert}}(w)
 \end{aligned}
 \end{equation}
 subject to normalized feature transforms:
 \begin{equation}
-\Phi_{\text{dist}}(w) = \max\left(0, \frac{D_{\max} - D(P_c, P_w)}{D_{\max}}\right)
+\Phi_{\text{dist}}(w) = \max\left(0.0, \, \frac{D_{\max} - D(P_c, P_w)}{D_{\max}}\right)
 \end{equation}
 \begin{equation}
-\Phi_{\text{star}}(w) = \frac{\text{Rating}(w)}{5.0}, \quad \Phi_{\text{elo}}(w) = \min\left(1, \max\left(0, \frac{R_w - 800}{1200}\right)\right)
+\Phi_{\text{star}}(w) = \frac{\text{Rating}(w)}{5.0}
 \end{equation}
 \begin{equation}
-\Phi_{\text{exp}}(w) = \min\left(1.0, \frac{\text{ExpYears}(w)}{10.0}\right)
+\Phi_{\text{elo}}(w) = \min\left(1.0, \, \max\left(0.0, \, \frac{R_w - 800}{1200}\right)\right)
 \end{equation}
-with calibrated weights $\alpha=0.25, \beta=0.20, \gamma=0.20, \delta=0.15, \zeta=0.10, \eta=0.10$.
+\begin{equation}
+\Phi_{\text{exp}}(w) = \min\left(1.0, \, \frac{\text{ExpYears}(w)}{10.0}\right)
+\end{equation}
+with calibrated weights $\alpha = 0.25$, $\beta = 0.20$, $\gamma = 0.20$, $\delta = 0.15$, $\zeta = 0.10$, and $\eta = 0.10$, satisfying $\sum \text{weights} = 1.0$. Live availability is binary ($\Phi_{\text{avail}}(w) = 1.0$), and accredited vocational certification yields $\Phi_{\text{cert}}(w) \in \{0.5, 1.0\}$.
 
 \vspace{0.8em}
 \noindent
@@ -269,10 +279,11 @@ The system architecture decouples presentation, business logic, and persistence:
 \vspace{0.8em}
 \noindent
 \fbox{%
-\parbox{0.96\linewidth}{%
+\parbox{\dimexpr\columnwidth-2\fboxsep-2\fboxrule\relax}{%
+\footnotesize
 \textbf{Algorithm 1: Workify Intelligent Matchmaking and Dispatch}\\
 \rule{\linewidth}{0.4pt}
-\textbf{Require:} Coordinates $P_c$, Trade $\mathcal{C}$, Database $\mathcal{W}$, Radius $D_{\max}=10\text{ km}$, Count $k=5$\\
+\textbf{Require:} Coords $P_c$, Category $\mathcal{C}$, Worker set $\mathcal{W}$, Radius $D_{\max}=10\text{ km}$, Count $k=5$\\
 \textbf{Ensure:} Top-$k$ Ranked Worker List $\mathcal{W}_{\text{ranked}}$\\[0.3em]
 1: $\mathcal{W}_{\text{candidate}} \gets []$\\
 2: \textbf{for all} $w \in \mathcal{W}$ \textbf{do}\\
@@ -294,8 +305,8 @@ The system architecture decouples presentation, business logic, and persistence:
 18: \quad $\Phi_{\text{exp}} \gets \min(1.0, w.\text{experience} / 10.0)$\\
 19: \quad $\Phi_{\text{avail}} \gets 1.0$\\
 20: \quad $\Phi_{\text{cert}} \gets (w.\text{isVerified} \;?\; 1.0 : 0.5)$\\
-21: \quad $w.\text{score} \gets 0.25\Phi_{\text{dist}} + 0.20\Phi_{\text{star}} + 0.20\Phi_{\text{elo}} + $\\
-\phantom{21: \quad $w.\text{score} \gets $} $0.15\Phi_{\text{exp}} + 0.10\Phi_{\text{avail}} + 0.10\Phi_{\text{cert}}$\\
+21: \quad $w.\text{score} \gets 0.25\Phi_{\text{dist}} + 0.20\Phi_{\text{star}} + 0.20\Phi_{\text{elo}}$\\
+\phantom{21: \quad $w.\text{score} \gets $} ${}+ 0.15\Phi_{\text{exp}} + 0.10\Phi_{\text{avail}} + 0.10\Phi_{\text{cert}}$\\
 22: \textbf{end for}\\
 23: Sort $\mathcal{W}_{\text{candidate}}$ descending by $w.\text{score}$\\
 24: $\mathcal{W}_{\text{ranked}} \gets \mathcal{W}_{\text{candidate}}[0 : k]$\\
@@ -319,7 +330,8 @@ The system was evaluated under simulated municipal workloads comprising 100 veri
 \vspace{0.3em}
 
 \noindent
-\begin{tabularx}{\linewidth}{|l|c|c|c|c|}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{|l|c|c|c|c|}
 \hline
 \rowcolor[HTML]{D9E1F2} 
 \textbf{Model} & \textbf{ACC} & \textbf{F1} & \textbf{Latency} & \textbf{FPR} \\ \hline
@@ -327,7 +339,8 @@ Random Allocation & 0.312 & 0.284 & 12.4 ms & 0.180 \\ \hline
 Spatial KNN [7] & 0.885 & 0.862 & 184.2 ms & 0.042 \\ \hline
 Collab. Filtering [4] & 0.821 & 0.798 & 240.6 ms & 0.068 \\ \hline
 \textbf{Workify (Proposed)} & \textbf{0.964} & \textbf{0.958} & \textbf{34.8 ms} & \textbf{0.000} \\ \hline
-\end{tabularx}
+\end{tabular}%
+}
 
 \vspace{0.8em}
 Workify achieves an average matchmaking execution time of \textbf{34.8~ms}, representing an \textbf{81.1\% reduction in latency} compared to Spatial KNN (184.2~ms) and an \textbf{85.5\% reduction} compared to Collaborative Filtering (240.6~ms). Furthermore, radial dispatch precision reaches \textbf{96.4\%}, ensuring workers are strictly within practical transit proximity.
@@ -354,7 +367,8 @@ To evaluate reputation stability, Table 2 documents the rating divergence over 5
 \vspace{0.3em}
 
 \noindent
-\begin{tabularx}{\linewidth}{|l|c|}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{|l|c|}
 \hline
 \rowcolor[HTML]{D9E1F2} 
 \textbf{Evaluation Condition} & \textbf{Mean Rating Shift} \\ \hline
@@ -362,7 +376,8 @@ High-Effort Servicer ($S_{\text{SES}} \ge 0.90$) & $+640\text{ Elo points}$ \\ \
 Average Servicer ($S_{\text{SES}} \approx 0.60$) & $+120\text{ Elo points}$ \\ \hline
 Substandard / Flagged ($S_{\text{SES}} \le 0.30$) & $-480\text{ Elo points}$ \\ \hline
 Random Masking Control & $\pm 18\text{ Elo points}$ \\ \hline
-\end{tabularx}
+\end{tabular}%
+}
 
 \vspace{0.8em}
 As illustrated in Figure 3, tradesmen maintaining consistent service quality achieved stable rating convergence from 1200 to 1840, establishing distinct reputation boundaries without upper-bound clustering.
@@ -384,7 +399,8 @@ Table 3 evaluates the security verification metrics across 120 live simulated bo
 \vspace{0.3em}
 
 \noindent
-\begin{tabularx}{\linewidth}{|l|c|}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{|l|c|}
 \hline
 \rowcolor[HTML]{D9E1F2} 
 \textbf{Security Metric} & \textbf{Measured Value} \\ \hline
@@ -392,7 +408,8 @@ Proxy Substitution Elimination & 100\% \\ \hline
 Mean Escrow Release Time & 1.18 seconds \\ \hline
 Customer Arrival Dispute Reduction & 76.4\% \\ \hline
 Aadhaar / ITI KYC Verification Latency & 2.45 seconds \\ \hline
-\end{tabularx}
+\end{tabular}%
+}
 
 \vspace{0.8em}
 \noindent
@@ -406,7 +423,8 @@ Table 4 contrasts the computational throughput of the decoupled microservices.
 \vspace{0.3em}
 
 \noindent
-\begin{tabularx}{\linewidth}{|l|c|c|}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{|l|c|c|}
 \hline
 \rowcolor[HTML]{D9E1F2} 
 \textbf{Subsystem} & \textbf{Latency} & \textbf{Throughput} \\ \hline
@@ -414,7 +432,8 @@ PostgreSQL Direct Query & 18.4 ms & 120 req/s \\ \hline
 FastAPI ML Vector Search & 34.8 ms & 480 req/s \\ \hline
 Redis Presence Cache & 1.82 ms & 2400 req/s \\ \hline
 AWS S3 Presigned URL & 42.1 ms & 310 req/s \\ \hline
-\end{tabularx}
+\end{tabular}%
+}
 
 \vspace{0.8em}
 \noindent
@@ -428,7 +447,8 @@ Table 5 presents a comprehensive structural comparison between Workify and mains
 \vspace{0.3em}
 
 \noindent
-\begin{tabularx}{\linewidth}{|l|p{2.2cm}|p{2.4cm}|}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{|l|p{2.2cm}|p{2.4cm}|}
 \hline
 \rowcolor[HTML]{D9E1F2} 
 \textbf{Aspect} & \textbf{Base Directory} & \textbf{This Work (Workify)} \\ \hline
@@ -438,7 +458,8 @@ Matchmaking & Manual Calling & Haversine + Elo Composite \\ \hline
 Rating Metric & 5-Star Average & Bilateral Elo Dynamic \\ \hline
 Arrival Security & None & 4-Digit HMAC-SHA256 OTP \\ \hline
 Cloud Backend & Monolithic Server & Containerized Microservices \\ \hline
-\end{tabularx}
+\end{tabular}%
+}
 
 \vspace{0.8em}
 \noindent
@@ -446,7 +467,8 @@ Cloud Backend & Monolithic Server & Containerized Microservices \\ \hline
 \vspace{0.3em}
 
 \noindent
-\begin{tabularx}{\linewidth}{|l|c|c|}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{|l|c|c|}
 \hline
 \rowcolor[HTML]{D9E1F2} 
 \textbf{Metric} & \textbf{KNN Baseline} & \textbf{This Work} \\ \hline
@@ -454,7 +476,8 @@ Dispatch Latency Drop & 184.2 ms & 34.8 ms (81.1\% faster) \\ \hline
 Radial Precision Gain & 88.5\% & 96.4\% (+7.9 pts) \\ \hline
 False Dispatch Rate & 11.5\% & 3.6\% (-7.9 pts) \\ \hline
 Proxy Fraud Rate & 14.2\% & 0.0\% (-14.2 pts) \\ \hline
-\end{tabularx}
+\end{tabular}%
+}
 
 \vspace{0.8em}
 \noindent
