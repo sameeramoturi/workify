@@ -1,8 +1,8 @@
 \documentclass[journal]{IEEEtran}
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
-\usepackage{algorithmic}
 \usepackage{algorithm}
+\usepackage{algpseudocode}
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}
@@ -214,33 +214,33 @@ Empirical parameter calibration establishes $\sum \text{weights} = 1.0$:
 \caption{Workify Intelligent Matchmaking and Dispatch}
 \label{alg:dispatch}
 \begin{algorithmic}[1]
-\REQUIRE Customer Coordinates $P_c$, Category $\mathcal{C}$, Database $\mathcal{W}$, Radius $D_{\max} = 10.0\text{ km}$, Count $k = 5$
-\ENSURE Top-$k$ Ranked Worker List $\mathcal{W}_{\text{ranked}}$
-\STATE $\mathcal{W}_{\text{candidate}} \leftarrow []$
-\FORALL{$w \in \mathcal{W}$}
-    \IF{$w.\text{category} == \mathcal{C}$ \ \textbf{and}\ $w.\text{status} == \text{'AVAILABLE'}$}
-        \STATE $d \leftarrow \text{ComputeHaversine}(P_c, w.\text{coords})$
-        \IF{$d \le D_{\max}$}
-            \STATE $w.\text{dist} \leftarrow d$
-            \STATE $\mathcal{W}_{\text{candidate}}.\text{append}(w)$
-        \ENDIF
-    \ENDIF
-\ENDFOR
-\IF{$|\mathcal{W}_{\text{candidate}}| == 0$}
-    \STATE \textbf{return} $\text{FallbackSearch}(P_c, \mathcal{C}, 15.0)$
-\ENDIF
-\FORALL{$w \in \mathcal{W}_{\text{candidate}}$}
-    \STATE $\Phi_{\text{dist}} \leftarrow \max(0, (D_{\max} - w.\text{dist}) / D_{\max})$
-    \STATE $\Phi_{\text{star}} \leftarrow w.\text{rating} / 5.0$
-    \STATE $\Phi_{\text{elo}} \leftarrow \min(1.0, \max(0.0, (w.\text{elo} - 800) / 1200))$
-    \STATE $\Phi_{\text{exp}} \leftarrow \min(1.0, w.\text{experience} / 10.0)$
-    \STATE $\Phi_{\text{avail}} \leftarrow 1.0$
-    \STATE $\Phi_{\text{cert}} \leftarrow (w.\text{isVerified} \;?\; 1.0 : 0.5)$
-    \STATE $w.\text{score} \leftarrow 0.25\Phi_{\text{dist}} + 0.20\Phi_{\text{star}} + 0.20\Phi_{\text{elo}} + 0.15\Phi_{\text{exp}} + 0.10\Phi_{\text{avail}} + 0.10\Phi_{\text{cert}}$
-\ENDFOR
-\STATE Sort $\mathcal{W}_{\text{candidate}}$ descending by $w.\text{score}$
-\STATE $\mathcal{W}_{\text{ranked}} \leftarrow \mathcal{W}_{\text{candidate}}[0 : k]$
-\STATE \textbf{return} $\mathcal{W}_{\text{ranked}}$
+\Require Customer Coordinates $P_c$, Category $\mathcal{C}$, Database $\mathcal{W}$, Radius $D_{\max} = 10.0\text{ km}$, Count $k = 5$
+\Ensure Top-$k$ Ranked Worker List $\mathcal{W}_{\text{ranked}}$
+\State $\mathcal{W}_{\text{candidate}} \gets []$
+\ForAll{$w \in \mathcal{W}$}
+    \If{$w.\text{category} == \mathcal{C}$ \ \textbf{and}\ $w.\text{status} == \text{'AVAILABLE'}$}
+        \State $d \gets \text{ComputeHaversine}(P_c, w.\text{coords})$
+        \If{$d \le D_{\max}$}
+            \State $w.\text{dist} \gets d$
+            \State $\mathcal{W}_{\text{candidate}}.\text{append}(w)$
+        \EndIf
+    \EndIf
+\EndFor
+\If{$|\mathcal{W}_{\text{candidate}}| == 0$}
+    \State \Return $\text{FallbackSearch}(P_c, \mathcal{C}, 15.0)$
+\EndIf
+\ForAll{$w \in \mathcal{W}_{\text{candidate}}$}
+    \State $\Phi_{\text{dist}} \gets \max(0, (D_{\max} - w.\text{dist}) / D_{\max})$
+    \State $\Phi_{\text{star}} \gets w.\text{rating} / 5.0$
+    \State $\Phi_{\text{elo}} \gets \min(1.0, \max(0.0, (w.\text{elo} - 800) / 1200))$
+    \State $\Phi_{\text{exp}} \gets \min(1.0, w.\text{experience} / 10.0)$
+    \State $\Phi_{\text{avail}} \gets 1.0$
+    \State $\Phi_{\text{cert}} \gets (w.\text{isVerified} \;?\; 1.0 : 0.5)$
+    \State $w.\text{score} \gets 0.25\Phi_{\text{dist}} + 0.20\Phi_{\text{star}} + 0.20\Phi_{\text{elo}} + 0.15\Phi_{\text{exp}} + 0.10\Phi_{\text{avail}} + 0.10\Phi_{\text{cert}}$
+\EndFor
+\State Sort $\mathcal{W}_{\text{candidate}}$ descending by $w.\text{score}$
+\State $\mathcal{W}_{\text{ranked}} \gets \mathcal{W}_{\text{candidate}}[0 : k]$
+\State \Return $\mathcal{W}_{\text{ranked}}$
 \end{algorithmic}
 \end{algorithm}
 
