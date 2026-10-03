@@ -143,13 +143,13 @@ The remainder of this paper is structured as follows: Section 2 surveys related 
 \noindent
 \textbf{2.1 Spatial Crowdsourcing and Hyperlocal Dispatch}
 
-Spatial crowdsourcing coordinates mobile workers to perform physical tasks at specific geographical coordinates [1]. Extensive research has addressed vehicle routing in ride-sharing [2]. However, residential services exhibit fundamentally different spatial constraints: technicians carry physical inventory and require long dwell times (45--180 minutes), necessitating localized geographic clustering rather than continuous en-route pickups. Commercial platforms like Urban Company and TaskRabbit focus predominantly on tier-1 metropolises [3], utilizing opaque centralized scheduling that imposes high commission fees (20--30\%) and deprives blue-collar tradesmen of independent professional identities.
+Spatial crowdsourcing coordinates mobile workers to perform physical tasks at specific geographical coordinates [1], [19]--[21]. Extensive research has addressed vehicle routing in ride-sharing [2]. However, residential services exhibit fundamentally different spatial constraints: technicians carry physical inventory and require long dwell times (45--180 minutes), necessitating localized geographic clustering rather than continuous en-route pickups. Commercial platforms like Urban Company and TaskRabbit focus predominantly on tier-1 metropolises [3], utilizing opaque centralized scheduling that imposes high commission fees (20--30\%) and deprives blue-collar tradesmen of independent professional identities.
 
 \vspace{0.8em}
 \noindent
 \textbf{2.2 Recommender Systems and The Rating Inflation Dilemma}
 
-Collaborative Filtering (CF) and Matrix Factorization (SVD) represent foundational recommender paradigms [4]. Nevertheless, in municipal labor markets, CF encounters severe cold-start failures and extreme data sparsity, as households hire plumbers or electricians only a few times per year. Furthermore, conventional 5-star rating systems suffer from systematic social-influence grade inflation [5], where average ratings drift toward 4.8--5.0, destroying distinguishing signals between exemplary and mediocre artisans. To eliminate this distortion, Workify adapts the competitive Elo rating framework [6] into a continuous service satisfaction metric.
+Collaborative Filtering (CF) and Matrix Factorization (SVD) represent foundational recommender paradigms [4]. Nevertheless, in municipal labor markets, CF encounters severe cold-start failures and extreme data sparsity, as households hire plumbers or electricians only a few times per year. Furthermore, conventional 5-star rating systems suffer from systematic social-influence grade inflation [5], where average ratings drift toward 4.8--5.0, destroying distinguishing signals between exemplary and mediocre artisans. To eliminate this distortion, Workify adapts the competitive Elo rating framework [6] alongside modern crowdsourcing reputation principles [22], [23] into a continuous service satisfaction metric.
 
 \vspace{0.8em}
 \noindent
@@ -268,7 +268,7 @@ Technician doorstep input triggers an atomic database state update from \texttt{
 \noindent
 \textbf{3.6 Three-Tier Cloud-Native Architecture}
 
-The system architecture decouples presentation, business logic, and persistence:
+The system architecture decouples presentation, business logic, and persistence following modern cloud-native architectural patterns [24]:
 \begin{itemize}
     \item \textbf{Presentation Tier}: Single-page React 18 / Vite web application utilizing an interactive OpenStreetMap Leaflet engine with animated custom DivIcon pins and responsive locality filtering.
     \item \textbf{Application Tier}: Django 5.0 REST Framework alongside an asynchronous FastAPI ML microservice for vector-accelerated Haversine and Elo computation.
@@ -501,7 +501,7 @@ Several technical constraints warrant consideration. First, the 10~km operationa
 \vspace{0.5em}
 This paper presented Workify, a cloud-native software framework for verified on-demand blue-collar tradesman dispatching in municipal developing urban regions. By integrating constrained Haversine geospatial optimization, bilateral Elo rating equilibrium, multi-factor utility ranking, and a two-factor physical arrival OTP protocol, Workify achieves 34.8~ms matchmaking latency, 96.4\% radial precision, and 100\% elimination of proxy tradesman substitutions.
 
-Future research directions include: (1) integrating localized Telugu Large Language Model (LLM) voice interfaces for non-literate citizens; (2) deploying edge-computer vision (YOLOv8) models for automated residential repair diagnosis; and (3) incorporating blockchain-anchored micro-insurance smart contracts for hazardous occupational protection.
+Future research directions include: (1) integrating localized Telugu Large Language Model (LLM) voice interfaces [17] for non-literate citizens; (2) deploying edge-computer vision (YOLOv8) models for automated residential repair diagnosis; and (3) incorporating blockchain-anchored micro-insurance smart contracts for hazardous occupational protection in connected smart cities [25].
 
 \vspace{1.2em}
 % ----------------- REFERENCES -----------------
@@ -567,24 +567,24 @@ Future research directions include: (1) integrating localized Telugu Large Langu
 [18] E. J. O'Neil, P. E. O'Neil, and G. Weikum, ``The LRU-K Page Replacement Algorithm,'' \textit{ACM SIGMOD Rec.}, vol. 22, no. 2, pp. 297--306, 1993.
 
 \noindent
-[19] S. Mittal et al., ``A Deep Learning Ensemble Approach for Malware Detection,'' \textit{Eng. Appl. Artif. Intell.}, vol. 139, p. 109560, 2025.
+[19] H. Su, K. Zheng, J. Huang, H. Jeung, L. Chen, and X. Zhou, ``Crowd-steering: Efficient and adaptable task assignment in spatial crowdsourcing,'' \textit{IEEE Trans. Knowl. Data Eng.}, vol. 28, no. 10, pp. 2618--2631, 2016.
 
 \noindent
-[20] M. A. Alohali et al., ``Two Stage Malware Detection Model in Internet of Vehicles,'' \textit{Sci. Rep.}, vol. 15, p. 20615, 2025.
+[20] T. Tong, J. She, B. Ding, L. Wang, and L. Chen, ``Online mobile micro-task allocation in spatial crowdsourcing,'' in \textit{Proc. IEEE 32nd Int. Conf. Data Eng. (ICDE)}, 2016, pp. 49--60.
 
 \noindent
-[21] S. M. Lundberg and S.-I. Lee, ``A Unified Approach to Interpreting Model Predictions,'' in \textit{Proc. NeurIPS}, 2017, pp. 4765--4774.
+[21] Y. Zhao, Y. Zheng, and G. Li, ``Spatial crowdsourcing: Challenges, solutions, and future directions,'' \textit{Proc. VLDB Endow.}, vol. 10, no. 12, pp. 2000--2003, 2017.
 
 \noindent
-[22] S. Abnar and W. Zuidema, ``Quantifying Attention Flow in Transformers,'' in \textit{Proc. ACL}, 2020, pp. 4190--4197.
+[22] M. S. Asghar and M. K. K. Niazi, ``Reputation management systems for crowdsourcing: A comprehensive review,'' \textit{IEEE Access}, vol. 8, pp. 162985--163004, 2020.
 
 \noindent
-[23] A. Vaswani et al., ``Attention is All You Need,'' in \textit{Proc. NeurIPS}, 2017.
+[23] X. Zhou, H. Rong, C. Yang, S. Deng, and Q. Z. Sheng, ``Location-sensitive and QoS-aware worker selection for crowdsensing tasks,'' \textit{IEEE Trans. Serv. Comput.}, vol. 14, no. 4, pp. 1184--1198, 2021.
 
 \noindent
-[24] S. Jain and B. C. Wallace, ``Attention is not Explanation,'' in \textit{Proc. NAACL-HLT}, 2019, pp. 3543--3556.
+[24] R. Buyya, S. N. Srirama, G. Casale et al., ``A manifesto for future generation cloud computing: Research directions for the next decade,'' \textit{ACM Comput. Surv.}, vol. 51, no. 5, pp. 1--38, 2018.
 
 \noindent
-[25] G. Oliveira et al., ``RansomSet - A Dataset for Ransomware Detection \& Analysis,'' \textit{IEEE DataPort}, 2025.
+[25] A. Zanella, N. Bui, A. Castellani, L. Vangelista, and M. Zorzi, ``Internet of Things for smart cities,'' \textit{IEEE Internet Things J.}, vol. 1, no. 1, pp. 22--32, 2014.
 
 \end{document}
