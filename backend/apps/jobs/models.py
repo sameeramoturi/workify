@@ -62,8 +62,25 @@ class Booking(models.Model):
     notes = models.TextField(blank=True)
     
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
+    
+    # Waiting-time prediction & lifecycle timestamps
+    accepted_at = models.DateTimeField(null=True, blank=True, help_text="Timestamp when worker accepts the booking")
+    started_at = models.DateTimeField(null=True, blank=True, help_text="Timestamp when service starts at doorstep")
+    completed_at = models.DateTimeField(null=True, blank=True, help_text="Timestamp when service is marked completed")
+    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        from django.utils import timezone
+        now = timezone.now()
+        if self.status == self.Status.ACCEPTED and not self.accepted_at:
+            self.accepted_at = now
+        elif self.status == self.Status.IN_PROGRESS and not self.started_at:
+            self.started_at = now
+        elif self.status == self.Status.COMPLETED and not self.completed_at:
+            self.completed_at = now
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Booking #{self.id}: {self.customer.username} -> {self.worker.user.username} ({self.status})"

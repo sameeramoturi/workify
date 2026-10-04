@@ -54,6 +54,11 @@ class BookingListCreateView(generics.ListCreateAPIView):
             user = User.objects.first()
             serializer.save(customer=user)
 
+class BookingDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Booking.objects.all()
+    serializer_class = BookingSerializer
+    permission_classes = [permissions.AllowAny]
+
 class UpdateBookingStatusView(APIView):
     permission_classes = [permissions.AllowAny]
 
@@ -67,6 +72,17 @@ class UpdateBookingStatusView(APIView):
         if new_status not in [c[0] for c in Booking.Status.choices]:
             return Response({"error": f"Invalid status: {new_status}"}, status=status.HTTP_400_BAD_REQUEST)
 
+        from django.utils import timezone
+        now = timezone.now()
+
+        # Update status and automatically record lifecycle timestamps
         booking.status = new_status
+        if new_status == Booking.Status.ACCEPTED and not booking.accepted_at:
+            booking.accepted_at = now
+        elif new_status == Booking.Status.IN_PROGRESS and not booking.started_at:
+            booking.started_at = now
+        elif new_status == Booking.Status.COMPLETED and not booking.completed_at:
+            booking.completed_at = now
+
         booking.save()
         return Response(BookingSerializer(booking).data)
