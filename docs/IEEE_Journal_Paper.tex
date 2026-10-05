@@ -93,11 +93,11 @@
 
 % ----------------- ABSTRACT & KEYWORDS (LEFT COLUMN MATCHING SAMPLE) -----------------
 \noindent
-\textbf{\textit{Abstract - In developing economies and emerging tier-2/tier-3 urban agglomerations, the domestic blue-collar tradesman sector (e.g., plumbing, electrical maintenance, carpentry, and HVAC repair) remains acutely fragmented. This market is plagued by information asymmetry, unverified vocational credentials, predatory and non-standardized pricing, and high mobilization latency. Mainstream on-demand gig economy platforms are almost exclusively engineered for capital-intensive tier-1 metropolises, relying on static catalog filtering and rigid advance scheduling that fails to accommodate localized spatial topologies, real-time technician availability, and mutual physical safety. To overcome these structural challenges, this paper presents Workify, a scalable, decoupled, cloud-native software framework tailored for municipal on-demand service delivery and verified worker matchmaking. The proposed platform incorporates three novel computational contributions: (1) a constrained Haversine Geospatial Optimization Engine enforcing strict 10~km municipal radial clustering across granular locality zones; (2) an adaptive Bilateral Elo-Based Rating Mechanism counteracting traditional review grade inflation by computing dynamic equilibrium scores based on the Servicer Effort Score (SES) and Customer Behaviour Score (CBS); and (3) a Multi-Factor Composite Recommendation Objective Function holistically weighting proximity, historical Elo ratings, star distributions, accredited vocational credentials (Govt ITI / National Trade Certificates), and real-time operational status. Furthermore, to guarantee physical safety and zero-trust transaction finality, the framework introduces a two-factor Doorstep Arrival One-Time Password (OTP) handshake integrated with an Amazon Web Services (AWS) S3 cryptographic KYC verification pipeline. Comprehensive empirical benchmarking conducted using simulated high-density workloads across 20 municipal localities in Rajahmundry, Andhra Pradesh, demonstrates that Workify achieves an average matchmaking latency of 34.8~ms (a 42.8\% latency reduction over conventional KNN dispatching), maintains a 96.4\% radial precision rate, and achieves 100\% mitigation of proxy technician fraud.}}
+\textbf{\textit{Abstract - Finding certified electricians, plumbers, and mechanics in secondary Indian cities remains an everyday struggle. In municipal hubs like Rajahmundry, most households still hire tradesmen through roadside contacts or informal neighborhood leads. This reliance on unverified channels leaves homeowners exposed to unpredictable pricing, questionable craftsmanship, and long arrival delays, while skilled artisans face erratic daily earnings. Mainstream on-demand platforms rarely serve these tier-2 and tier-3 urban markets well; their models favor dense metropolitan centers, static catalog booking, and high commission cuts that alienate local technicians. To address these municipal market frictions, we present Workify, a decoupled, cloud-native dispatch and reputation framework engineered specifically for localized municipal jurisdictions. The architecture combines three core mechanisms: (1) a bounded Haversine geospatial engine that restricts technician discovery to a strict 10\,km municipal boundary across defined locality zones; (2) a bilateral Elo rating formulation that adjusts both worker effort scores (SES) and customer behavior scores (CBS) after every job, curbing the runaway score inflation typical of standard 5-star reviews; and (3) a multi-criteria ranking function balancing travel proximity, verified vocational trade certifications (such as ITI diplomas), on-duty availability, and historical Elo standing. To protect domestic privacy and enforce physical accountability, Workify requires a cryptographic one-time password (OTP) check-in at the customer's doorstep before work can begin or escrow funds can disburse. Evaluation across 20 municipal localities in Rajahmundry shows an average matchmaking latency of 34.8\,ms---an 81.1\% reduction compared to conventional spatial KNN approaches---with 96.4\% radial precision and complete prevention of proxy worker substitution.}}
 
 \vspace{0.8em}
 \noindent
-\textbf{\textit{Keyword - On-Demand gig economy, spatial crowdsourcing, Haversine optimization, bilateral Elo rating, multi-factor ranking, doorstep authentication, microservices, cloud engineering, smart cities.}}
+\textbf{\textit{Keyword - On-demand gig economy, spatial crowdsourcing, Haversine optimization, bilateral Elo rating, multi-factor ranking, doorstep authentication, microservices, cloud engineering, smart cities.}}
 
 \vspace{1.2em}
 
@@ -106,33 +106,33 @@
 \textbf{\large 1. INTRODUCTION}
 
 \vspace{0.5em}
-Municipalities and tier-2/tier-3 urban centers in developing nations (such as Rajahmundry, Kakinada, and Vijayawada in Andhra Pradesh, India) are experiencing rapid demographic growth and infrastructural expansion. This transition has fueled immense demand for dependable domestic trade services, including plumbing, electrical maintenance, carpentry, masonry, and refrigeration servicing. However, while transportation and quick-commerce food sectors have been transformed by algorithmic platforms like Uber and Zomato, the domestic trade sector remains unorganized, informal, and volatile. Homeowners face severe uncertainty regarding tradesman authenticity, arbitrary pricing structures, and unreliable arrival schedules [1].
+Secondary and tertiary urban centers across India are undergoing rapid residential expansion. In municipal cities such as Rajahmundry, Kakinada, and Vijayawada in Andhra Pradesh, homeowners require regular domestic trade support---from fixing leaking pipelines and rewiring short circuits to servicing split-unit air conditioners. Yet while algorithm-driven applications have thoroughly reshaped municipal cab booking and restaurant deliveries, the local blue-collar service sector remains informal and fragmented. Daily hiring still runs through roadside worker corners, local hardware shop referrals, or frayed word-of-mouth networks [1]. For residential households, this reliance produces constant anxiety over technician competence, erratic pricing, and no-show workers.
 
-Unlike ride-hailing services where trips are transient (15--30 minutes) and require standardized vehicles, home services demand specialized artisanal skills, heavy tooling, diagnostic acumen, and prolonged physical presence within private residences. These realities introduce fundamental operational challenges:
+Hiring a tradesman differs sharply from hailing a taxi. A cab ride lasts fifteen to thirty minutes in an automobile governed by regional motor vehicle standards. In contrast, home maintenance requires artisans to bring specialized tools, diagnose concealed faults behind walls or under floors, and remain inside a private dwelling for hours. These practical realities create four chronic friction points:
 \begin{enumerate}
-    \item \textbf{Information Asymmetry and Credential Opacity}: Homeowners lack standardized means to confirm whether a technician possesses certified qualifications, such as Industrial Training Institute (ITI) diplomas or National Skills Qualifications Framework (NSQF) accreditations.
-    \item \textbf{Arbitrary and Predatory Billing}: Absence of upfront standardized estimates encourages arbitrary labor rates, hidden travel charges, and price gouging during residential emergencies.
-    \item \textbf{Severe Mobilization Latency \& False Availability}: Static yellow-page directories fail to convey whether a technician is actively on-duty, currently engaged in another repair, or physically distant.
-    \item \textbf{Physical Security and Accountability Deficits}: When unknown tradesmen enter private households, neither party possesses cryptographic proof-of-dispatch, resulting in proxy worker substitutions and dispute escalations.
+    \item \textbf{Unverified Skills and Opaque Backgrounds}: Homeowners have virtually no reliable way to verify whether a visiting electrician or plumber has undergone formal vocational training, such as an Industrial Training Institute (ITI) trade course or a recognized National Skills Qualifications Framework (NSQF) certification.
+    \item \textbf{Inconsistent and Disputed Pricing}: Without clear upfront rate schedules, repair bills often swing widely. Customers frequently encounter disputed travel add-ons, sudden material markups, or steep premiums during urgent evening repairs.
+    \item \textbf{Mobilization Delays and Phantom Availability}: Printed directories or static classified apps list phone numbers but cannot track whether a tradesman is on duty, already occupied with an all-day job across town, or available to respond promptly.
+    \item \textbf{Doorstep Safety and Worker Accountability}: Because informal bookings involve no verified record of dispatch, residents worry about personal security, while technicians have little protection against unpaid bills or unfounded damage claims. In some cases, unvetted apprentices show up in place of the experienced tradesman who took the initial call.
 \end{enumerate}
 
-To resolve these systemic bottlenecks, this paper presents \textbf{Workify} (``\textit{Skilled Workers. Better Tomorrow.}''), a specialized, multi-tenant cloud-native software system engineered specifically for municipal geographical jurisdictions.
+To bridge these gaps, we designed \textbf{Workify} (``\textit{Skilled Workers. Better Tomorrow.}''), an integrated cloud-native system targeted specifically at municipal trade networks.
 
 \vspace{0.8em}
 \noindent
 \textbf{1.1 Key Technical Contributions}
 \begin{itemize}
-    \item \textbf{Constrained Haversine Geospatial Optimization}: Formulates a bounding-box pre-filtered spherical distance algorithm achieving sub-50ms execution over 20 municipal zones calibrated with real GPS coordinates.
-    \item \textbf{Bilateral Elo Rating Equilibrium}: Adapts game-theoretic Elo ratings to counter 5-star inflation, maintaining dual dynamic equilibrium scores ($S_{\text{SES}}$ and $S_{\text{CBS}}$) between technicians and customers.
-    \item \textbf{Multi-Factor Composite Recommendation}: Formulates a multi-criteria utility function incorporating spatial proximity, historical Elo rating, star ratings, vocational seniority, and live telemetry.
-    \item \textbf{Zero-Trust Physical Authentication}: Implements a 4-digit arrival OTP handshake cryptographically linked to atomic job status state transitions and automated escrow billing.
-    \item \textbf{Production Microservices Architecture}: Realizes a three-tier decoupled platform combining React 18 / OpenStreetMap Leaflet, Django REST APIs, FastAPI ML engine, and AWS S3 secure KYC storage.
+    \item \textbf{Constrained Haversine Search}: We develop a bounding-box pre-filtered Haversine routine that evaluates trade candidates within a strict 10\,km municipal boundary, achieving dispatch filtering in under 50\,ms across 20 calibrated municipal zones in Rajahmundry.
+    \item \textbf{Bilateral Elo Reputation Model}: Moving away from inflated 5-star averages, we introduce a two-sided Elo rating system that updates technician performance ($S_{\text{SES}}$) and customer conduct ($S_{\text{CBS}}$) simultaneously, creating a stable, cheat-resistant quality metric.
+    \item \textbf{Multi-Criteria Dispatch Ranking}: We formulate a multi-factor ranking function that weights transit proximity, historical Elo standing, customer reviews, verified trade qualifications (ITI/Govt certificates), years of experience, and live duty status.
+    \item \textbf{Doorstep Authentication Protocol}: We implement a time-sensitive, 4-digit arrival token (OTP) generated on the client device. Entering this code on-site verifies physical presence, triggers an atomic transition from \texttt{PENDING} to \texttt{IN\_PROGRESS}, and protects payments via escrow.
+    \item \textbf{Production Cloud Architecture}: We build a modular three-tier software stack pairing a React 18 / OpenStreetMap Leaflet frontend with Django REST APIs, a dedicated FastAPI vector engine, and Amazon S3 dual-bucket storage for public assets and encrypted KYC documents.
 \end{itemize}
 
 \vspace{0.8em}
 \noindent
 \textbf{1.2 Paper Organization}
-The remainder of this paper is structured as follows: Section 2 surveys related literature in spatial crowdsourcing and reputation modeling. Section 3 formalizes the mathematical optimization, rating equations, and system architecture. Section 4 presents comprehensive empirical benchmark results and comparative analyses. Section 5 outlines current limitations, and Section 6 concludes with directions for future work.
+The rest of the paper is organized as follows: Section 2 examines existing literature on spatial crowdsourcing, reputation scoring, and doorstep verification. Section 3 details our optimization formulation, mathematical equations, and architectural design. Section 4 presents empirical benchmark figures, microservice throughput, and field test results. Section 5 discusses current operational limitations, and Section 6 outlines directions for upcoming work.
 
 \vspace{1.2em}
 % ----------------- SECTION 2: RELATED WORK -----------------
@@ -143,25 +143,25 @@ The remainder of this paper is structured as follows: Section 2 surveys related 
 \noindent
 \textbf{2.1 Spatial Crowdsourcing and Hyperlocal Dispatch}
 
-Spatial crowdsourcing coordinates mobile workers to perform physical tasks at specific geographical coordinates [1], [19]--[21]. Extensive research has addressed vehicle routing in ride-sharing [2]. However, residential services exhibit fundamentally different spatial constraints: technicians carry physical inventory and require long dwell times (45--180 minutes), necessitating localized geographic clustering rather than continuous en-route pickups. Commercial platforms like Urban Company and TaskRabbit focus predominantly on tier-1 metropolises [3], utilizing opaque centralized scheduling that imposes high commission fees (20--30\%) and deprives blue-collar tradesmen of independent professional identities.
+Spatial crowdsourcing coordinates mobile workers to complete physical duties at specific geographical coordinates [1], [19]--[21]. While researchers have explored task assignment extensively for ride-hailing and courier fleets [2], home repair dispatch presents an entirely different set of operational constraints. Artisans do not pick up and drop off passengers along continuous corridors; they transport bulky tools and replacement parts to a single residential location, staying on-site for 45 to 180 minutes per visit. Consequently, tight municipal neighborhood clustering matters far more than dynamic en-route rerouting. Prominent platforms such as Urban Company and TaskRabbit operate primarily in large metropolitan centers [3]. Their centralized allocation structures frequently levy steep commissions (often 20--30\%) while reducing skilled, independent tradesmen to interchangeable gig workers.
 
 \vspace{0.8em}
 \noindent
 \textbf{2.2 Recommender Systems and The Rating Inflation Dilemma}
 
-Collaborative Filtering (CF) and Matrix Factorization (SVD) represent foundational recommender paradigms [4]. Nevertheless, in municipal labor markets, CF encounters severe cold-start failures and extreme data sparsity, as households hire plumbers or electricians only a few times per year. Furthermore, conventional 5-star rating systems suffer from systematic social-influence grade inflation [5], where average ratings drift toward 4.8--5.0, destroying distinguishing signals between exemplary and mediocre artisans. To eliminate this distortion, Workify adapts the competitive Elo rating framework [6] alongside modern crowdsourcing reputation principles [22], [23] into a continuous service satisfaction metric.
+Collaborative Filtering (CF) and Matrix Factorization (SVD) form the bedrock of algorithmic recommendations [4]. However, these algorithms struggle in municipal trade markets due to extreme interaction sparsity. Because a typical home hires a plumber or electrician only two or three times a year, customer-worker interaction matrices are overwhelmingly sparse, causing standard collaborative filters to suffer severe cold-start issues. In parallel, conventional 5-star rating mechanisms inevitably succumb to social-influence rating inflation [5]. When the overwhelming majority of reviews drift to 4.8 or 5.0 stars, ratings lose their ability to distinguish experienced master artisans from novices. To overcome this distortion, Workify incorporates principles from competitive Elo ratings [6] and modern crowdsourcing reputation frameworks [22], [23], translating completed bookings into dynamic, zero-sum reputation adjustments based on job complexity and mutual conduct.
 
 \vspace{0.8em}
 \noindent
 \textbf{2.3 Physical Security and Doorstep Trust Verification}
 
-Physical home security remains a critical concern in gig labor adoption [15]. Conventional platforms rely on passive SMS alerts without cryptographic verification at the doorstep. In contrast, Workify introduces an atomic two-factor HMAC-SHA256 arrival token protocol combined with AWS S3 pre-signed document storage, preventing unauthorized proxy labor substitutions.
+Personal safety during home service visits is a well-recognized barrier to gig platform adoption [15]. Most commercial services rely solely on automated SMS alerts or phone numbers, providing no tamper-proof guarantee that the arriving technician is actually the individual shown in the profile. Workify addresses this risk with an atomic, two-factor arrival handshake built on HMAC-SHA256 tokens, accompanied by Amazon S3 pre-signed storage for verified identity and trade documents. This workflow ensures that unvetted substitute workers cannot initiate billing or access private premises under someone else's name.
 
 \vspace{0.8em}
 \noindent
 \textbf{2.4 Gap Identification}
 
-Prior research has addressed spatial KNN queries [7] or theoretical ride-sharing dispatch [2], but has overlooked municipal multi-factor trade ranking integrated with bilateral reputation equilibrium and physical proof-of-dispatch. Workify bridges this critical gap.
+Prior literature has investigated spatial k-nearest neighbor (KNN) indexes [7] and theoretical routing models for urban fleets [2]. However, existing work rarely tackles the combined problem of localized multi-factor trade ranking, two-sided reputation balancing, and physical proof-of-dispatch within medium-sized municipal centers. Workify addresses this operational void directly.
 
 \vspace{1.2em}
 % ----------------- SECTION 3: METHODOLOGY -----------------
@@ -172,13 +172,13 @@ Prior research has addressed spatial KNN queries [7] or theoretical ride-sharing
 \noindent
 \textbf{3.1 Municipal Geographic Scope and Problem Setting}
 
-The evaluation framework is grounded in the urban geography of Rajahmundry, Andhra Pradesh, India, comprising 20 validated municipal zones (Danavaipeta, Morampudi, Innespeta, Aryapuram, Prakash Nagar, Dowleswaram, etc.). The system manages a worker set $\mathcal{W}$ across 7 core trade specializations (Plumbing, Electrical, Carpentry, Masonry, HVAC, Appliance Repair, Cleaning).
+We set our operational scope across the municipal territory of Rajahmundry, a prominent urban district in Andhra Pradesh, India. The municipal area is divided into 20 verified local wards and neighborhoods (such as Danavaipeta, Morampudi, Innespeta, Aryapuram, Prakash Nagar, and Dowleswaram). Within this territory, the platform maintains a pool of technicians $\mathcal{W}$ across seven core domestic disciplines: plumbing, electrical systems, carpentry, masonry, air conditioning/refrigeration (HVAC), appliance repair, and home sanitation.
 
 \vspace{0.8em}
 \noindent
 \textbf{3.2 Constrained Geospatial Haversine Optimization}
 
-Let customer location be $P_c = (\phi_c, \lambda_c)$ and candidate worker location be $P_w = (\phi_w, \lambda_w)$ in radians. The spatial differentials are:
+Let the customer's coordinates be $P_c = (\phi_c, \lambda_c)$ and candidate worker coordinates be $P_w = (\phi_w, \lambda_w)$, where latitudes and longitudes are given in radians. The angular differences are:
 \begin{equation}
 \Delta\phi = \phi_w - \phi_c, \quad \Delta\lambda = \lambda_w - \lambda_c
 \end{equation}
@@ -195,7 +195,7 @@ c = 2 \cdot \arctan2\left(\sqrt{a}, \sqrt{1 - a}\right)
 \begin{equation}
 D(P_c, P_w) = R \cdot c
 \end{equation}
-To eliminate expensive global distance evaluations, the candidate set is bounded by:
+To avoid expensive exhaustive searches across distant towns and maintain sub-second response times, candidate workers are filtered through a strict municipal boundary check:
 \begin{equation}
 \begin{aligned}
 \mathcal{W}_{\text{cand}} = \{ w \in \mathcal{W} \mid &\; \text{Cat}(w) = \mathcal{C}, \\
@@ -203,32 +203,33 @@ To eliminate expensive global distance evaluations, the candidate set is bounded
 & \text{Status}(w) = \text{AVAIL} \}
 \end{aligned}
 \end{equation}
-where $D_{\max} = 10.0\text{ km}$ enforces municipal locality boundaries.
+where $D_{\max} = 10.0\text{ km}$ defines the maximum acceptable transit radius across municipal service zones.
 
 \vspace{0.8em}
 \noindent
 \textbf{3.3 Bilateral Elo Dynamic Rating Formulation (SES \& CBS)}
 
-Both workers ($w$) and customers ($c$) maintain continuous ratings initialized at baseline $R_w^{(0)} = 1200$ and $R_c^{(0)} = 1200$. The expected satisfaction probability is modeled by the logistic sigmoid:
+Both workers ($w$) and customers ($c$) maintain continuous ratings starting from an initial baseline of $R_w^{(0)} = 1200$ and $R_c^{(0)} = 1200$. Before each service engagement, expected outcome probabilities are calculated using the logistic sigmoid:
 \begin{equation}
 E_w = \frac{1}{1 + 10^{(R_c - R_w)/400}}
 \end{equation}
 \begin{equation}
 E_c = \frac{1}{1 + 10^{(R_w - R_c)/400}}
 \end{equation}
-Upon service completion, the Servicer Effort Score ($S_{\text{SES}} \in [0, 1]$) and Customer Behaviour Score ($S_{\text{CBS}} \in [0, 1]$) update ratings synchronously with damping factor $K = 32$:
+Upon task completion, the Servicer Effort Score ($S_{\text{SES}} \in [0, 1]$) and the Customer Behaviour Score ($S_{\text{CBS}} \in [0, 1]$) update their respective ratings simultaneously using a sensitivity parameter $K = 32$:
 \begin{equation}
 R_w^{(t+1)} = R_w^{(t)} + K \cdot (S_{\text{SES}} - E_w)
 \end{equation}
 \begin{equation}
 R_c^{(t+1)} = R_c^{(t)} + K \cdot (S_{\text{CBS}} - E_c)
 \end{equation}
+This formulation ensures that a technician who delivers high craftsmanship under difficult conditions earns substantial rating gains, while uncooperative customer conduct or sloppy repairs result in downward adjustments.
 
 \vspace{0.8em}
 \noindent
 \textbf{3.4 Multi-Factor Composite Recommendation Function}
 
-Candidate tradesmen are ranked using a multi-criteria utility function:
+Candidate tradesmen within the municipal search perimeter are prioritized using a multi-criteria composite score:
 \begin{equation}
 \begin{aligned}
 \mathcal{F}(w) = &\; \alpha \cdot \Phi_{\text{dist}}(w) + \beta \cdot \Phi_{\text{star}}(w) \\
@@ -249,30 +250,30 @@ subject to normalized feature transforms:
 \begin{equation}
 \Phi_{\text{exp}}(w) = \min\left(1.0, \, \frac{\text{ExpYears}(w)}{10.0}\right)
 \end{equation}
-with calibrated weights $\alpha = 0.25$, $\beta = 0.20$, $\gamma = 0.20$, $\delta = 0.15$, $\zeta = 0.10$, and $\eta = 0.10$, satisfying $\sum \text{weights} = 1.0$. Live availability is binary ($\Phi_{\text{avail}}(w) = 1.0$), and accredited vocational certification yields $\Phi_{\text{cert}}(w) \in \{0.5, 1.0\}$.
+with calibrated coefficients $\alpha = 0.25$, $\beta = 0.20$, $\gamma = 0.20$, $\delta = 0.15$, $\zeta = 0.10$, and $\eta = 0.10$, which satisfy $\sum \text{weights} = 1.0$. Real-time worker availability acts as a binary multiplier ($\Phi_{\text{avail}}(w) = 1.0$), while accredited vocational qualification provides an explicit scoring bonus ($\Phi_{\text{cert}}(w) = 1.0$ for government ITI/NSQF certified artisans versus $0.5$ for uncertified workers).
 
 \vspace{0.8em}
 \noindent
 \textbf{3.5 Zero-Trust Physical Verification Protocol}
 
-Upon booking confirmation, the platform computes a 4-digit arrival token:
+As soon as a client confirms a booking, the system derives a time-sensitive, 4-digit arrival passcode:
 \begin{equation}
 \begin{aligned}
 \text{OTP} = &\; \text{HMAC-SHA256}(K_{\text{secret}}, \\
 & \text{BookingID} \parallel \text{Timestamp}) \pmod{10^4}
 \end{aligned}
 \end{equation}
-Technician doorstep input triggers an atomic database state update from \texttt{PENDING} to \texttt{IN\_PROGRESS}, starting the billing timer.
+When the technician arrives at the home, entering this passcode triggers an atomic database state transition from \texttt{PENDING} to \texttt{IN\_PROGRESS}. This validates physical presence on-site, starts the billable work timer, and activates escrow safeguards.
 
 \vspace{0.8em}
 \noindent
 \textbf{3.6 Three-Tier Cloud-Native Architecture}
 
-The system architecture decouples presentation, business logic, and persistence following modern cloud-native architectural patterns [24]:
+Workify implements a modular three-tier software architecture adhering to modern distributed systems design principles [24]:
 \begin{itemize}
-    \item \textbf{Presentation Tier}: Single-page React 18 / Vite web application utilizing an interactive OpenStreetMap Leaflet engine with animated custom DivIcon pins and responsive locality filtering.
-    \item \textbf{Application Tier}: Django 5.0 REST Framework alongside an asynchronous FastAPI ML microservice for vector-accelerated Haversine and Elo computation.
-    \item \textbf{Data Tier}: PostgreSQL 15 relational store, Redis 7.0 caching layer, and AWS S3 dual-bucket storage isolating public marketing media from private, encrypted KYC documents accessible via 15-minute Pre-signed URLs.
+    \item \textbf{Presentation Tier}: A responsive single-page web client built with React 18 and Vite. It incorporates an interactive OpenStreetMap Leaflet map featuring custom animated markers (\texttt{DivIcon}) that allow users to inspect technician locations and filter by locality ward.
+    \item \textbf{Application Tier}: A Django 5.0 REST backend managing user authentication and core business rules, coupled with an asynchronous FastAPI microservice optimized for vector calculations and real-time Elo updates.
+    \item \textbf{Data Tier}: A PostgreSQL 15 relational database storing application entities, a Redis 7.0 in-memory cache for live worker presence, and Amazon S3 dual-bucket storage. Public UI media is stored separately from private KYC records (such as Aadhaar and ITI diplomas), which are guarded by 15-minute expiring pre-signed URLs.
 \end{itemize}
 
 % ----------------- ALGORITHM 1 -----------------
@@ -322,7 +323,7 @@ The system architecture decouples presentation, business logic, and persistence 
 \noindent
 \textbf{4.1 Detection and Matchmaking Latency Performance}
 
-The system was evaluated under simulated municipal workloads comprising 100 verified tradesmen and 500 concurrent dispatch requests across Rajahmundry localities. Table 1 reports comparative dispatch latency and radial precision against baseline algorithms.
+We benchmarked Workify under simulated municipal workloads comprising 100 verified tradesmen and 500 concurrent dispatch requests distributed across 20 municipal zones in Rajahmundry. Table 1 summarizes the observed dispatch latencies, overall accuracy, and false-positive rates relative to conventional baseline approaches.
 
 \vspace{0.8em}
 \noindent
@@ -343,7 +344,7 @@ Collab. Filtering [4] & 0.821 & 0.798 & 240.6 ms & 0.068 \\ \hline
 }
 
 \vspace{0.8em}
-Workify achieves an average matchmaking execution time of \textbf{34.8~ms}, representing an \textbf{81.1\% reduction in latency} compared to Spatial KNN (184.2~ms) and an \textbf{85.5\% reduction} compared to Collaborative Filtering (240.6~ms). Furthermore, radial dispatch precision reaches \textbf{96.4\%}, ensuring workers are strictly within practical transit proximity.
+Workify registers an average dispatch execution latency of \textbf{34.8~ms}. This represents an \textbf{81.1\% reduction in latency} compared to spatial KNN search (184.2~ms) and an \textbf{85.5\% reduction} compared to collaborative filtering (240.6~ms). Furthermore, because the pre-filtered Haversine routine prunes out-of-boundary candidates prior to composite scoring, radial precision reaches \textbf{96.4\%}, ensuring that matched technicians can realistically reach the customer without crossing unpredictable transit barriers.
 
 \vspace{0.8em}
 \safeincludeimage[width=\linewidth]{fig1_latency_comparison.png}{Figure 1: Benchmarking Dispatch Latency and Radial Precision across Evaluated Matchmaking Models.}
@@ -359,7 +360,7 @@ Workify achieves an average matchmaking execution time of \textbf{34.8~ms}, repr
 \noindent
 \textbf{4.2 Explanation Fidelity and Rating Stability}
 
-To evaluate reputation stability, Table 2 documents the rating divergence over 50 consecutive service cycles.
+To evaluate how well the bilateral Elo mechanism resists rating inflation, we tracked score trajectories over 50 consecutive service cycles. Table 2 details the average rating shifts observed across different technician performance tiers.
 
 \vspace{0.8em}
 \noindent
@@ -380,7 +381,7 @@ Random Masking Control & $\pm 18\text{ Elo points}$ \\ \hline
 }
 
 \vspace{0.8em}
-As illustrated in Figure 3, tradesmen maintaining consistent service quality achieved stable rating convergence from 1200 to 1840, establishing distinct reputation boundaries without upper-bound clustering.
+As illustrated in Figure 3, tradesmen who maintained steady service quality experienced a consistent score progression from 1200 to 1840 Elo points. Rather than clustering indistinguishably near a 5.0 ceiling, the scores formed clear performance tiers, offering users an intuitive and tamper-resistant quality signal.
 
 \vspace{0.8em}
 \safeincludeimage[width=\linewidth]{fig3_elo_rating_progression.png}{Figure 3: Dynamic Convergence of Bilateral Worker Elo Ratings.}
@@ -391,7 +392,7 @@ As illustrated in Figure 3, tradesmen maintaining consistent service quality ach
 \noindent
 \textbf{4.3 Cross-Method Agreement and Security Validation}
 
-Table 3 evaluates the security verification metrics across 120 live simulated bookings.
+We validated the doorstep verification pipeline across 120 live simulated bookings spanning typical residential scenarios. Table 3 lists the recorded security and operational metrics.
 
 \vspace{0.8em}
 \noindent
@@ -412,10 +413,13 @@ Aadhaar / ITI KYC Verification Latency & 2.45 seconds \\ \hline
 }
 
 \vspace{0.8em}
+Because a booking cannot transition to \texttt{IN\_PROGRESS} without the customer-held OTP, the platform achieved \textbf{100\% elimination of proxy worker substitutions}. In addition, arrival dispute incidents dropped by \textbf{76.4\%}, while automated escrow payouts settled in an average of \textbf{1.18 seconds} once both parties confirmed task completion.
+
+\vspace{0.8em}
 \noindent
 \textbf{4.4 Explanation and Dispatch Efficiency}
 
-Table 4 contrasts the computational throughput of the decoupled microservices.
+We evaluated throughput across individual backend subsystems under continuous request volume. Table 4 records the execution latency and request capacity measured for each tier.
 
 \vspace{0.8em}
 \noindent
@@ -436,10 +440,13 @@ AWS S3 Presigned URL & 42.1 ms & 310 req/s \\ \hline
 }
 
 \vspace{0.8em}
+The in-memory Redis cache handled 2,400 requests per second at 1.82~ms latency, facilitating instant worker availability lookups. In parallel, the FastAPI calculation microservice sustained 480 requests per second at 34.8~ms latency, confirming its capacity to manage peak booking traffic in municipal centers without forming request queues.
+
+\vspace{0.8em}
 \noindent
 \textbf{4.5 Comparative Analysis with Conventional Architectures}
 
-Table 5 presents a comprehensive structural comparison between Workify and mainstream platforms.
+To highlight the functional advantages of Workify over legacy platforms, Table 5 compares architectural features between our system, standard online classifieds, and traditional gig directories.
 
 \vspace{0.8em}
 \noindent
@@ -483,7 +490,7 @@ Proxy Fraud Rate & 14.2\% & 0.0\% (-14.2 pts) \\ \hline
 \noindent
 \textbf{4.6 Qualitative Field Example}
 
-In municipal testing across Rajahmundry, a resident in Danavaipeta requesting emergency plumbing repairs received candidate matching within 32~ms. The top-ranked technician (Ramesh Das, 12 years experience, 1840 Elo rating, ITI Certified) located 1.8~km away in Innespeta was automatically alerted, arriving on-site in 14 minutes. Doorstep OTP validation instantly unlocked escrow payment authorization, confirming zero-trust transaction finality.
+During field testing in Rajahmundry, a resident in Danavaipeta reported an urgent kitchen plumbing leak. The platform processed the request and retrieved top candidate matches in 32~ms. The highest-ranked technician---Ramesh Das, who brings 12 years of trade experience, an ITI certificate, and an Elo rating of 1840---was stationed 1.8~km away in Innespeta. He accepted the dispatch and arrived at the home in 14 minutes. Once the resident shared the 4-digit doorstep passcode, the system verified his arrival, started the work timer, and committed the agreed fee to escrow. Following the repair, both parties exchanged ratings, updating their bilateral Elo scores in real time.
 
 \vspace{1.2em}
 % ----------------- SECTION 5: LIMITATIONS -----------------
@@ -491,7 +498,7 @@ In municipal testing across Rajahmundry, a resident in Danavaipeta requesting em
 \textbf{\large 5. LIMITATIONS}
 
 \vspace{0.5em}
-Several technical constraints warrant consideration. First, the 10~km operational radius assumption is calibrated for compact riverine urban centers like Rajahmundry; sprawling metropolitan zones may require dynamic radius dilation based on real-time traffic telemetry. Second, tradesman device heterogeneity in blue-collar markets requires graceful degradation for low-bandwidth 2G/3G networks. Third, bilateral Elo convergence relies on reciprocal customer reviews; intermittent review omission requires historical Bayesian smoothing to prevent score drift.
+While our findings demonstrate clear operational benefits, several limitations should be noted. First, the 10\,km operational radius fits compact urban centers like Rajahmundry well, but larger municipal areas may need adaptive radius dilation that accounts for live bridge traffic and seasonal road congestion. Second, tradesmen in regional markets often carry budget mobile devices; frontend components must maintain smooth performance and graceful offline degradation on unstable 2G and 3G connections. Finally, the bilateral Elo model assumes both customer and worker submit reciprocal ratings after every engagement. When customers skip the review step, Bayesian historical smoothing is required to avoid artificial score decay.
 
 \vspace{1.2em}
 % ----------------- SECTION 6: CONCLUSION AND FUTURE WORK -----------------
@@ -499,9 +506,9 @@ Several technical constraints warrant consideration. First, the 10~km operationa
 \textbf{\large 6. CONCLUSION AND FUTURE WORK}
 
 \vspace{0.5em}
-This paper presented Workify, a cloud-native software framework for verified on-demand blue-collar tradesman dispatching in municipal developing urban regions. By integrating constrained Haversine geospatial optimization, bilateral Elo rating equilibrium, multi-factor utility ranking, and a two-factor physical arrival OTP protocol, Workify achieves 34.8~ms matchmaking latency, 96.4\% radial precision, and 100\% elimination of proxy tradesman substitutions.
+In this paper, we presented Workify, a cloud-native platform designed to organize and streamline on-demand trade services in secondary municipal markets. By integrating constrained Haversine geospatial filtering, bilateral Elo reputation dynamics, multi-factor ranking, and a two-factor doorstep authentication handshake, the system delivers dispatch matching in 34.8~ms with 96.4\% radial precision and zero proxy worker substitutions.
 
-Future research directions include: (1) integrating localized Telugu Large Language Model (LLM) voice interfaces [17] for non-literate citizens; (2) deploying edge-computer vision (YOLOv8) models for automated residential repair diagnosis; and (3) incorporating blockchain-anchored micro-insurance smart contracts for hazardous occupational protection in connected smart cities [25].
+Looking ahead, we plan to extend this work along three main directions: (1) building localized Telugu speech and voice recognition interfaces [17] so that non-literate workers and elders can use the platform comfortably; (2) integrating lightweight computer vision models (such as YOLOv8) on mobile devices to assist technicians with preliminary fault inspection; and (3) exploring smart-contract micro-insurance mechanisms to offer affordable accident coverage for technicians performing hazardous electrical or structural work [25].
 
 \vspace{1.2em}
 % ----------------- REFERENCES -----------------
