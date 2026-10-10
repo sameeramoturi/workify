@@ -49,7 +49,7 @@
 % ----------------- TITLE & AUTHOR BLOCK (MATCHING SAMPLE PAPER) -----------------
 \twocolumn[{
   \begin{center}
-    {\Large \textbf{Workify: A Scalable Cloud-Native Framework for On-Demand Municipal Tradesman Matchmaking Using Geospatial Optimization, Bilateral Elo Dynamics, and Two-Factor Physical Authentication} \par}
+    {\Large \textbf{A Scalable Cloud-Native Framework for On-Demand Municipal Tradesman Matchmaking Using Geospatial Optimization, Bilateral Elo Dynamics, and Two-Factor Physical Authentication} \par}
     \vspace{1.5em}
 
     % Row 1: Guide and First Author
@@ -93,7 +93,7 @@
 
 % ----------------- ABSTRACT & KEYWORDS (LEFT COLUMN MATCHING SAMPLE) -----------------
 \noindent
-\textbf{\textit{Abstract - Hiring a reliable electrician, plumber, or carpenter in India's tier-2 and tier-3 cities is still an exercise in frustration. In places like Rajahmundry, families depend on roadside worker hubs or phone numbers passed around by neighbors. This leads to unpredictable pricing, poor workmanship, and no-shows, while genuine tradesmen struggle to get steady work without paying steep middleman fees. Big aggregator platforms rarely work here; they are designed for metro cities, demand advance booking, and take heavy commissions that drive local workers away. We built Workify to address these municipal hurdles directly through three core ideas: (1) a localized Haversine search engine that caps technician searches within a strict 10\,km town radius; (2) a bilateral Elo rating system that scores worker effort (SES) alongside customer behavior (CBS) to curb the 5-star review inflation common to online apps; and (3) a weighted multi-factor ranking scheme combining travel distance, verified ITI diplomas, hands-on experience, and active duty status. To protect homeowners and prevent proxy worker fraud, jobs start only after a technician enters a 4-digit arrival OTP generated on the customer's phone. In field benchmarks across 20 Rajahmundry municipal localities, Workify delivered matchmaking in 34.8\,ms---81.1\% faster than standard spatial KNN search---while keeping radial precision at 96.4\% and eliminating proxy substitutions entirely.}}
+\textbf{\textit{Abstract - Hiring a reliable electrician, plumber, or carpenter in India's tier-2 and tier-3 cities is still an exercise in frustration. In places like Rajahmundry, families depend on roadside worker hubs or phone numbers passed around by neighbors. This leads to unpredictable pricing, poor workmanship, and no-shows, while genuine tradesmen struggle to get steady work without paying steep middleman fees. Big aggregator platforms rarely work here; they are designed for metro cities, demand advance booking, and take heavy commissions that drive local workers away. We designed the proposed framework to address these municipal hurdles directly through three core ideas: (1) a localized Haversine search engine that caps technician searches within a strict 10\,km town radius; (2) a bilateral Elo rating system that scores worker effort (SES) alongside customer behavior (CBS) to curb the 5-star review inflation common to online apps; and (3) a weighted multi-factor ranking scheme combining travel distance, verified ITI diplomas, hands-on experience, and active duty status. To protect homeowners and prevent proxy worker fraud, jobs start only after a technician enters a 4-digit arrival OTP generated on the customer's phone. In field benchmarks across 20 Rajahmundry municipal localities, the proposed framework delivered matchmaking in 34.8\,ms---81.1\% faster than standard spatial KNN search---while keeping radial precision at 96.4\% and eliminating proxy substitutions entirely.}}
 
 \vspace{0.8em}
 \noindent
@@ -116,7 +116,7 @@ Fixing a home is fundamentally different from booking a cab. When someone hails 
     \item \textbf{Safety Concerns and Proxy Workers}: Without digital check-in records, homeowners worry about letting strangers into their houses. In unorganized markets, an experienced technician often accepts a job over the phone and sends an untrained apprentice in his place.
 \end{enumerate}
 
-To tackle these everyday problems, we created \textbf{Workify} (``\textit{Skilled Workers. Better Tomorrow.}''), a cloud-native platform focused specifically on municipal town centers.
+To tackle these everyday problems, we developed a specialized, cloud-native municipal framework focused specifically on localized secondary town centers.
 
 \vspace{0.8em}
 \noindent
@@ -149,19 +149,19 @@ Spatial crowdsourcing assigns physical tasks at real geographic coordinates to n
 \noindent
 \textbf{2.2 Recommender Systems and The Rating Inflation Dilemma}
 
-Collaborative Filtering (CF) and Matrix Factorization (SVD) are widely used in modern recommenders [4]. In small-town trade markets, however, CF breaks down due to extreme data sparsity. A typical household hires a plumber only two or three times a year, leaving matrix rows almost blank and triggering severe cold-start failures. Meanwhile, standard 5-star rating systems suffer from well-known social review inflation [5]. When nearly every worker is scored between 4.8 and 5.0 stars, customers cannot tell genuine master craftsmen apart from beginners. To restore meaningful quality signals, Workify adapts the competitive Elo rating system [6]---paired with established crowdsourcing quality control principles [22], [23]---into a continuous two-sided reputation metric that shifts upward or downward based on job difficulty and actual performance.
+Collaborative Filtering (CF) and Matrix Factorization (SVD) are widely used in modern recommenders [4]. In small-town trade markets, however, CF breaks down due to extreme data sparsity. A typical household hires a plumber only two or three times a year, leaving matrix rows almost blank and triggering severe cold-start failures. Meanwhile, standard 5-star rating systems suffer from well-known social review inflation [5]. When nearly every worker is scored between 4.8 and 5.0 stars, customers cannot tell genuine master craftsmen apart from beginners. To restore meaningful quality signals, the proposed framework adapts the competitive Elo rating system [6]---paired with established crowdsourcing quality control principles [22], [23]---into a continuous two-sided reputation metric that shifts upward or downward based on job difficulty and actual performance.
 
 \vspace{0.8em}
 \noindent
 \textbf{2.3 Physical Security and Doorstep Trust Verification}
 
-Personal safety during home service visits is a recurring concern in gig labor adoption [15]. Most commercial services rely on basic SMS messages or phone calls, which offer zero proof that the technician at the door is actually the registered person. Workify stops this by requiring an HMAC-SHA256 arrival token entered at the doorstep, backed by Amazon S3 pre-signed storage for verified Aadhaar and trade certificates. This ensures unvetted substitute workers cannot initiate jobs under someone else's name.
+Personal safety during home service visits is a recurring concern in gig labor adoption [15]. Most commercial services rely on basic SMS messages or phone calls, which offer zero proof that the technician at the door is actually the registered person. The proposed framework stops this by requiring an HMAC-SHA256 arrival token entered at the doorstep, backed by Amazon S3 pre-signed storage for verified Aadhaar and trade certificates. This ensures unvetted substitute workers cannot initiate jobs under someone else's name.
 
 \vspace{0.8em}
 \noindent
 \textbf{2.4 Gap Identification}
 
-Past research has focused on spatial KNN algorithms [7] or theoretical taxi dispatch models [2]. Very few studies have looked at how to combine localized spatial bounding, two-sided reputation balancing, and physical doorstep check-ins for secondary cities. Workify was built specifically to close this gap.
+Past research has focused on spatial KNN algorithms [7] or theoretical taxi dispatch models [2]. Very few studies have looked at how to combine localized spatial bounding, two-sided reputation balancing, and physical doorstep check-ins for secondary cities. The proposed framework was built specifically to close this gap.
 
 \vspace{1.2em}
 % ----------------- SECTION 3: METHODOLOGY -----------------
@@ -269,7 +269,7 @@ When the technician arrives on-site, entering this passcode triggers an atomic d
 \noindent
 \textbf{3.6 Three-Tier Cloud-Native Architecture}
 
-Workify uses a clean three-tier software architecture that keeps presentation, business logic, and storage completely separate [24]:
+The proposed framework uses a clean three-tier software architecture that keeps presentation, business logic, and storage completely separate [24]:
 \begin{itemize}
     \item \textbf{Presentation Tier}: A responsive web app built with React 18 and Vite. It features an interactive OpenStreetMap Leaflet map with animated custom markers (\texttt{DivIcon}), allowing users to view nearby technicians and filter by locality ward.
     \item \textbf{Application Tier}: A Django 5.0 REST backend managing accounts, bookings, and business rules, paired with an asynchronous FastAPI microservice built specifically for fast distance matrix checks and Elo updates.
@@ -282,7 +282,7 @@ Workify uses a clean three-tier software architecture that keeps presentation, b
 \fbox{%
 \parbox{\dimexpr\columnwidth-2\fboxsep-2\fboxrule\relax}{%
 \footnotesize
-\textbf{Algorithm 1: Workify Intelligent Matchmaking and Dispatch}\\
+\textbf{Algorithm 1: Intelligent Municipal Matchmaking and Dispatch}\\
 \rule{\linewidth}{0.4pt}
 \textbf{Require:} Coords $P_c$, Category $\mathcal{C}$, Worker set $\mathcal{W}$, Radius $D_{\max}=10\text{ km}$, Count $k=5$\\
 \textbf{Ensure:} Top-$k$ Ranked Worker List $\mathcal{W}_{\text{ranked}}$\\[0.3em]
@@ -323,7 +323,7 @@ Workify uses a clean three-tier software architecture that keeps presentation, b
 \noindent
 \textbf{4.1 Detection and Matchmaking Latency Performance}
 
-We evaluated Workify under simulated municipal workloads comprising 100 verified tradesmen and 500 concurrent booking requests distributed across Rajahmundry's municipal wards. Table 1 summarizes the observed dispatch latencies, overall accuracy, and false-positive rates compared with baseline approaches.
+We evaluated the proposed framework under simulated municipal workloads comprising 100 verified tradesmen and 500 concurrent booking requests distributed across Rajahmundry's municipal wards. Table 1 summarizes the observed dispatch latencies, overall accuracy, and false-positive rates compared with baseline approaches.
 
 \vspace{0.8em}
 \noindent
@@ -339,12 +339,12 @@ We evaluated Workify under simulated municipal workloads comprising 100 verified
 Random Allocation & 0.312 & 0.284 & 12.4 ms & 0.180 \\ \hline
 Spatial KNN [7] & 0.885 & 0.862 & 184.2 ms & 0.042 \\ \hline
 Collab. Filtering [4] & 0.821 & 0.798 & 240.6 ms & 0.068 \\ \hline
-\textbf{Workify (Proposed)} & \textbf{0.964} & \textbf{0.958} & \textbf{34.8 ms} & \textbf{0.000} \\ \hline
+\textbf{Proposed Framework} & \textbf{0.964} & \textbf{0.958} & \textbf{34.8 ms} & \textbf{0.000} \\ \hline
 \end{tabular}%
 }
 
 \vspace{0.8em}
-As Table 1 shows, Workify completed dispatch matching in an average of \textbf{34.8~ms}. This is \textbf{81.1\% faster} than spatial KNN search (184.2~ms) and \textbf{85.5\% faster} than standard collaborative filtering (240.6~ms). Because our pre-filtered Haversine routine discards out-of-bounds candidates before calculating composite scores, radial precision reaches \textbf{96.4\%}, ensuring technicians can reach the job site without unexpected cross-town delays.
+As Table 1 shows, the proposed framework completed dispatch matching in an average of \textbf{34.8~ms}. This is \textbf{81.1\% faster} than spatial KNN search (184.2~ms) and \textbf{85.5\% faster} than standard collaborative filtering (240.6~ms). Because our pre-filtered Haversine routine discards out-of-bounds candidates before calculating composite scores, radial precision reaches \textbf{96.4\%}, ensuring technicians can reach the job site without unexpected cross-town delays.
 
 \vspace{0.8em}
 \safeincludeimage[width=\linewidth]{fig1_latency_comparison.png}{Figure 1: Benchmarking Dispatch Latency and Radial Precision across Evaluated Matchmaking Models.}
@@ -446,7 +446,7 @@ The in-memory Redis cache handled 2,400 requests per second at 1.82~ms latency, 
 \noindent
 \textbf{4.5 Comparative Analysis with Conventional Architectures}
 
-To highlight the functional advantages of Workify over older platforms, Table 5 compares architectural features between our system, standard online classifieds, and traditional gig directories.
+To highlight the functional advantages of the proposed framework over older platforms, Table 5 compares architectural features between our system, standard online classifieds, and traditional gig directories.
 
 \vspace{0.8em}
 \noindent
@@ -458,7 +458,7 @@ To highlight the functional advantages of Workify over older platforms, Table 5 
 \begin{tabular}{|l|p{2.2cm}|p{2.4cm}|}
 \hline
 \rowcolor[HTML]{D9E1F2} 
-\textbf{Aspect} & \textbf{Base Directory} & \textbf{This Work (Workify)} \\ \hline
+\textbf{Aspect} & \textbf{Base Directory} & \textbf{Proposed Framework} \\ \hline
 Target Domain & National Classifieds & Tier-2/3 Municipalities \\ \hline
 Geospatial Precision & City / Pincode & Sub-Municipal (20 Zones) \\ \hline
 Matchmaking & Manual Calling & Haversine + Elo Composite \\ \hline
@@ -506,7 +506,7 @@ While the field results are encouraging, a few practical limitations should be k
 \textbf{\large 6. CONCLUSION AND FUTURE WORK}
 
 \vspace{0.5em}
-In this paper, we presented Workify, a cloud-native platform designed to organize and streamline on-demand trade services in secondary municipal markets. By integrating constrained Haversine geospatial filtering, bilateral Elo reputation dynamics, multi-factor ranking, and a two-factor doorstep authentication handshake, the system delivers dispatch matching in 34.8~ms with 96.4\% radial precision and zero proxy worker substitutions.
+In this paper, we presented a cloud-native software framework designed to organize and streamline on-demand trade services in secondary municipal markets. By integrating constrained Haversine geospatial filtering, bilateral Elo reputation dynamics, multi-factor ranking, and a two-factor doorstep authentication handshake, the system delivers dispatch matching in 34.8~ms with 96.4\% radial precision and zero proxy worker substitutions.
 
 Looking ahead, we plan to extend this work along three main directions: (1) building localized Telugu speech and voice recognition interfaces [17] so that non-literate workers and elders can use the platform comfortably; (2) integrating lightweight computer vision models (such as YOLOv8) on mobile devices to assist technicians with preliminary fault inspection; and (3) exploring smart-contract micro-insurance mechanisms to offer affordable accident coverage for technicians performing hazardous electrical or structural work [25].
 
@@ -556,7 +556,7 @@ Looking ahead, we plan to extend this work along three main directions: (1) buil
 [12] H. W. Kuhn, ``The Hungarian Method for the Assignment Problem,'' \textit{Nav. Res. Logist. Q.}, vol. 2, no. 1--2, pp. 83--97, 1955.
 
 \noindent
-[13] S. Moturi, ``Workify: Monorepo Architecture for Autonomous Worker Availability and Governance Systems,'' \textit{GitHub Repository}, 2026. [Online]. Available: \url{https://github.com/sameeramoturi/workify}
+[13] S. Moturi, ``Autonomous Worker Availability and Governance Systems Architecture,'' \textit{Technical Report}, 2026.
 
 \noindent
 [14] V. Kumar and S. Rajan, ``Emerging Trends in Localized Hyperlocal Delivery and Gig Worker Optimization,'' \textit{Int. J. Comput. Appl.}, vol. 182, no. 45, pp. 12--18, 2021.

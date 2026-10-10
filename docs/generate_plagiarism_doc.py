@@ -4,7 +4,7 @@ with open('docs/Exact_Format_Paper.tex', 'r', encoding='utf-8') as f:
     text = f.read()
 
 # Full Title
-title = "Workify: A Scalable Cloud-Native Framework for On-Demand Municipal Tradesman Matchmaking Using Geospatial Optimization, Bilateral Elo Dynamics, and Two-Factor Physical Authentication"
+title = "A Scalable Cloud-Native Framework for On-Demand Municipal Tradesman Matchmaking Using Geospatial Optimization, Bilateral Elo Dynamics, and Two-Factor Physical Authentication"
 
 # Clean comments (only unescaped % are LaTeX comments)
 clean = re.sub(r'(?<!\\)%.*', '', text)
@@ -38,7 +38,7 @@ def clean_text(t):
     t = re.sub(r'\\begin\{equation\}.*?\\end\{equation\}', '\n[Mathematical Formulation]\n', t, flags=re.DOTALL)
     t = re.sub(r'\\begin\{tabular\}.*?\\end\{tabular\}', '\n[Table Benchmark Results]\n', t, flags=re.DOTALL)
     t = re.sub(r'\\safeincludeimage(\[[^\]]*\])?\{[^}]+\}\{[^}]+\}', '', t)
-    t = re.sub(r'\\fbox\{.*?Algorithm 1:.*?\}\}', '\n[Algorithm 1: Workify Intelligent Matchmaking and Dispatch]\n', t, flags=re.DOTALL)
+    t = re.sub(r'\\fbox\{.*?Algorithm 1:.*?\}\}', '\n[Algorithm 1: Intelligent Municipal Matchmaking and Dispatch]\n', t, flags=re.DOTALL)
     
     # Strip formatting tags and environments
     t = re.sub(r'\\(begin|end)\{[^}]+\}', '', t)
