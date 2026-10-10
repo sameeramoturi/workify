@@ -782,28 +782,59 @@ const INITIAL_DEMO_JOBS = [
     budget: "₹800",
     budget_amount: 800,
     priority: "URGENT",
+    job_type: "ONE_TIME",
+    recurrence_pattern: "NONE",
+    billing_cycle: "PER_VISIT",
     status: "PENDING",
     otp: "7341",
     createdAt: new Date(Date.now() - 1000 * 60 * 15).toISOString()
+  },
+  {
+    id: 103,
+    customer: "Lakshmi Narayana",
+    customerPhone: "+91 98492 88412",
+    category: "Plumber",
+    service: "Daily Water Supply & Motor Maintenance",
+    description: "Daily overhead tank valve checks, solar heater line maintenance, and water pump inspection every morning.",
+    location: "Innespeta, Rajahmundry",
+    distance_km: 1.8,
+    time: "Every Day, 07:30 AM - 08:30 AM",
+    budget: "₹6,000 / month (₹200/day)",
+    budget_amount: 6000,
+    priority: "NORMAL",
+    job_type: "RECURRING",
+    recurrence_pattern: "DAILY",
+    end_date: "2026-11-10",
+    billing_cycle: "MONTHLY",
+    status: "PENDING",
+    otp: "8204",
+    createdAt: new Date(Date.now() - 1000 * 60 * 5).toISOString()
   }
 ];
 
 export function dispatchJob(jobData) {
   try {
     const existing = getDispatchedJobs();
+    const isRecurring = jobData.job_type === 'RECURRING';
     const newJob = {
       id: Math.floor(1000 + Math.random() * 9000),
       customer: jobData.customer || "Sameera Moturi (You)",
       customerPhone: jobData.customerPhone || "+91 98480 12345",
       category: jobData.category || "Plumber",
-      service: `${jobData.subcategory || jobData.category} Issue`,
+      service: `${jobData.subcategory || jobData.category} ${isRecurring ? 'Subscription' : 'Issue'}`,
       description: jobData.description,
       location: `${jobData.address}, ${jobData.city || 'Rajahmundry'}`,
       distance_km: parseFloat((Math.random() * 2.5 + 1.2).toFixed(1)),
-      time: `${jobData.preferred_date || 'Today'}, ${jobData.preferred_time || '10:00 AM - 12:00 PM'}`,
+      time: isRecurring 
+        ? `${jobData.recurrence_pattern || 'Daily'}, ${jobData.preferred_time || '07:30 AM - 09:30 AM'}`
+        : `${jobData.preferred_date || 'Today'}, ${jobData.preferred_time || '10:00 AM - 12:00 PM'}`,
       budget: typeof jobData.budget === 'string' ? jobData.budget : `₹${jobData.budget_min || 500} - ₹${jobData.budget_max || 800}`,
       budget_amount: jobData.budget_max || 750,
       priority: jobData.priority || "HIGH",
+      job_type: jobData.job_type || 'ONE_TIME',
+      recurrence_pattern: jobData.recurrence_pattern || 'NONE',
+      end_date: jobData.end_date || null,
+      billing_cycle: jobData.billing_cycle || 'PER_VISIT',
       status: "PENDING",
       otp: Math.floor(1000 + Math.random() * 9000).toString(),
       createdAt: new Date().toISOString()

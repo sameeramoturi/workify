@@ -28,7 +28,8 @@ import {
   Award,
   Sliders,
   Building2,
-  Send
+  Send,
+  Repeat
 } from 'lucide-react';
 
 export default function WorkerDashboard() {
@@ -416,10 +417,26 @@ export default function WorkerDashboard() {
                         }}
                       >
                         <div style={{ flex: 1, minWidth: '280px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' }}>
                             <h4 style={{ fontSize: '15px', fontWeight: '800', color: '#1e3a8a', margin: 0 }}>
                               #{job.id} • {job.service}
                             </h4>
+                            {job.job_type === 'RECURRING' && (
+                              <span style={{
+                                backgroundColor: '#ecfdf5',
+                                color: '#059669',
+                                fontSize: '11px',
+                                fontWeight: '800',
+                                padding: '2px 8px',
+                                borderRadius: '4px',
+                                border: '1px solid #a7f3d0',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '4px'
+                              }}>
+                                <Repeat size={11} /> 🔄 {job.recurrence_pattern || 'DAILY'} SUBSCRIPTION
+                              </span>
+                            )}
                             <span style={{
                               backgroundColor: job.priority === 'HIGH' || job.priority === 'URGENT' ? '#fee2e2' : '#e0e7ff',
                               color: job.priority === 'HIGH' || job.priority === 'URGENT' ? '#ef4444' : '#4338ca',
@@ -441,6 +458,7 @@ export default function WorkerDashboard() {
                             <span>📍 Location: <strong>{job.location} ({job.distance_km} km away)</strong></span>
                             <span>🕒 Scheduled: <strong>{job.time}</strong></span>
                             <span>💰 Budget: <strong style={{ color: '#2563eb' }}>{job.budget}</strong></span>
+                            {job.end_date && <span>🗓️ Contract Till: <strong style={{ color: '#059669' }}>{job.end_date}</strong></span>}
                           </div>
                         </div>
 
@@ -501,23 +519,37 @@ export default function WorkerDashboard() {
                         }}
                       >
                         <div style={{ flex: 1 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
                             <span style={{ backgroundColor: '#10b981', color: '#fff', fontSize: '11px', fontWeight: '700', padding: '2px 8px', borderRadius: '4px' }}>
                               ● IN PROGRESS
                             </span>
                             <h4 style={{ fontSize: '15px', fontWeight: '800', color: '#065f46', margin: 0 }}>
                               #{job.id} • {job.service}
                             </h4>
+                            {job.job_type === 'RECURRING' && (
+                              <span style={{
+                                backgroundColor: '#dcfce7',
+                                color: '#15803d',
+                                fontSize: '11px',
+                                fontWeight: '800',
+                                padding: '2px 8px',
+                                borderRadius: '4px',
+                                border: '1px solid #86efac'
+                              }}>
+                                🔄 RECURRING CONTRACT ({job.recurrence_pattern || 'DAILY'})
+                              </span>
+                            )}
                           </div>
 
                           <p style={{ fontSize: '13px', color: '#334155', margin: '4px 0' }}>
                             Customer: <strong>{job.customer}</strong> • 📍 {job.location}
                           </p>
 
-                          <div style={{ display: 'flex', gap: '16px', fontSize: '12px', color: '#475569' }}>
+                          <div style={{ display: 'flex', gap: '16px', fontSize: '12px', color: '#475569', flexWrap: 'wrap' }}>
                             <span>Accepted at: <strong>{job.acceptedAt || 'Recent'}</strong></span>
                             <span>Agreed Fare: <strong style={{ color: '#059669' }}>{job.budget}</strong></span>
                             <span>Phone: <strong>{job.customerPhone}</strong></span>
+                            {job.end_date && <span>Contract Ends: <strong style={{ color: '#059669' }}>{job.end_date}</strong></span>}
                           </div>
                         </div>
 

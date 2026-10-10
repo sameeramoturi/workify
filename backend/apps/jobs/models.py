@@ -15,6 +15,23 @@ class JobPost(models.Model):
         COMPLETED = 'COMPLETED', 'Completed'
         CANCELLED = 'CANCELLED', 'Cancelled'
 
+    class JobType(models.TextChoices):
+        ONE_TIME = 'ONE_TIME', 'One-time Task'
+        RECURRING = 'RECURRING', 'Recurring / Subscription'
+
+    class RecurrencePattern(models.TextChoices):
+        NONE = 'NONE', 'None'
+        DAILY = 'DAILY', 'Daily (7 Days/Week)'
+        WEEKDAYS = 'WEEKDAYS', 'Weekdays (Mon-Fri)'
+        ALTERNATE_DAYS = 'ALTERNATE_DAYS', 'Alternate Days'
+        WEEKLY = 'WEEKLY', 'Weekly (1 Day/Week)'
+        MONTHLY = 'MONTHLY', 'Monthly Contract'
+
+    class BillingCycle(models.TextChoices):
+        PER_VISIT = 'PER_VISIT', 'Per Visit / Daily'
+        WEEKLY = 'WEEKLY', 'Weekly'
+        MONTHLY = 'MONTHLY', 'Monthly Lump-sum'
+
     customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='posted_jobs')
     category = models.CharField(max_length=100) # e.g. Plumber
     subcategory = models.CharField(max_length=100, blank=True) # e.g. Pipe Repair
@@ -32,6 +49,12 @@ class JobPost(models.Model):
     budget_min = models.DecimalField(max_digits=10, decimal_places=2, default=500.00)
     budget_max = models.DecimalField(max_digits=10, decimal_places=2, default=800.00)
     
+    # Recurring / Subscription fields
+    job_type = models.CharField(max_length=20, choices=JobType.choices, default=JobType.ONE_TIME)
+    recurrence_pattern = models.CharField(max_length=20, choices=RecurrencePattern.choices, default=RecurrencePattern.NONE)
+    end_date = models.DateField(null=True, blank=True, help_text="End date for recurring schedule/subscription")
+    billing_cycle = models.CharField(max_length=20, choices=BillingCycle.choices, default=BillingCycle.PER_VISIT)
+
     priority = models.CharField(max_length=10, choices=Priority.choices, default=Priority.NORMAL)
     attachment = models.ImageField(upload_to='job_attachments/', blank=True, null=True)
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.OPEN)
@@ -63,6 +86,12 @@ class Booking(models.Model):
     
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
     
+    # Recurrence & Subscription fields
+    is_recurring = models.BooleanField(default=False)
+    recurrence_pattern = models.CharField(max_length=50, blank=True, default='')
+    end_date = models.DateField(null=True, blank=True, help_text="Subscription end date")
+    billing_cycle = models.CharField(max_length=50, blank=True, default='')
+
     # Waiting-time prediction & lifecycle timestamps
     accepted_at = models.DateTimeField(null=True, blank=True, help_text="Timestamp when worker accepts the booking")
     started_at = models.DateTimeField(null=True, blank=True, help_text="Timestamp when service starts at doorstep")

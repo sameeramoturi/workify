@@ -19,7 +19,8 @@ import {
   Wrench,
   RefreshCw,
   Plus,
-  Check
+  Check,
+  Repeat
 } from 'lucide-react';
 
 export default function CustomerBookings() {
@@ -33,7 +34,13 @@ export default function CustomerBookings() {
 
   // Load bookings and dispatched customer jobs
   const loadCustomerData = () => {
-    const directBookings = getBookings();
+    const directBookings = getBookings().map(b => ({
+      ...b,
+      job_type: b.is_recurring ? 'RECURRING' : (b.job_type || 'ONE_TIME'),
+      recurrence_pattern: b.recurrence_pattern || 'NONE',
+      end_date: b.end_date,
+      billing_cycle: b.billing_cycle
+    }));
     const dispatched = getDispatchedJobs().map(j => ({
       id: `JOB-${j.id}`,
       workerName: j.assignedWorker || `${j.category} Specialist`,
@@ -45,7 +52,11 @@ export default function CustomerBookings() {
       address: j.location,
       totalEstimate: j.budget_amount || 650,
       otp: j.otp || '5912',
-      status: j.status === 'COMPLETED' ? 'COMPLETED' : 'CONFIRMED'
+      status: j.status === 'COMPLETED' ? 'COMPLETED' : 'CONFIRMED',
+      job_type: j.job_type || 'ONE_TIME',
+      recurrence_pattern: j.recurrence_pattern || 'NONE',
+      end_date: j.end_date,
+      billing_cycle: j.billing_cycle
     }));
 
     // Merge both types of customer bookings
@@ -250,7 +261,23 @@ export default function CustomerBookings() {
                       </div>
                     </div>
 
-                    <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                      {item.job_type === 'RECURRING' && (
+                        <span style={{
+                          backgroundColor: '#ecfdf5',
+                          color: '#059669',
+                          padding: '4px 10px',
+                          borderRadius: '16px',
+                          fontSize: '11px',
+                          fontWeight: '800',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          border: '1px solid #a7f3d0'
+                        }}>
+                          <Repeat size={12} /> {item.recurrence_pattern || 'DAILY'} SUBSCRIPTION
+                        </span>
+                      )}
                       {item.status === 'COMPLETED' ? (
                         <span style={{
                           backgroundColor: '#ecfdf5',
@@ -294,9 +321,16 @@ export default function CustomerBookings() {
                     fontSize: '13px'
                   }}>
                     <div>
-                      <span style={{ color: '#64748b', fontSize: '11px', display: 'block' }}>SCHEDULED TIME</span>
-                      <strong style={{ color: '#0f172a' }}>{item.date}</strong>
-                      <div style={{ fontSize: '12px', color: '#475569' }}>{item.timeSlot}</div>
+                      <span style={{ color: '#64748b', fontSize: '11px', display: 'block' }}>
+                        {item.job_type === 'RECURRING' ? 'SUBSCRIPTION SCHEDULE' : 'SCHEDULED TIME'}
+                      </span>
+                      <strong style={{ color: '#0f172a' }}>
+                        {item.job_type === 'RECURRING' ? `🔄 ${item.recurrence_pattern || 'Daily'} Plan` : item.date}
+                      </strong>
+                      <div style={{ fontSize: '12px', color: '#475569' }}>
+                        {item.timeSlot}
+                        {item.end_date && <span style={{ display: 'block', fontSize: '11px', color: '#2563eb' }}>Till {item.end_date}</span>}
+                      </div>
                     </div>
 
                     <div>
