@@ -1,5 +1,5 @@
 \documentclass[10pt,twocolumn,a4paper]{article}
-\usepackage[margin=0.72in,top=0.85in,bottom=0.85in]{geometry}
+\usepackage[margin=0.68in,top=0.72in,bottom=0.72in]{geometry}
 \usepackage{times}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{graphicx}
@@ -13,6 +13,8 @@
 \usepackage{cite}
 \usepackage{microtype}
 \usepackage{fancyhdr}
+\usepackage{enumitem}
+\setlist{nosep, leftmargin=*}
 
 % Page numbering setup matching sample paper
 \pagestyle{fancy}
@@ -24,6 +26,19 @@
 
 \graphicspath{{figures/}{./}}
 
+% Micro-spacing parameters for strict 6-page conference budget
+\setlength{\columnsep}{0.22in}
+\setlength{\parindent}{1.0em}
+\setlength{\textfloatsep}{4pt plus 1pt minus 1pt}
+\setlength{\intextsep}{4pt plus 1pt minus 1pt}
+\setlength{\floatsep}{4pt plus 1pt minus 1pt}
+\setlength{\abovecaptionskip}{2.5pt}
+\setlength{\belowcaptionskip}{1.5pt}
+\setlength{\abovedisplayskip}{2.5pt plus 1pt minus 1pt}
+\setlength{\belowdisplayskip}{2.5pt plus 1pt minus 1pt}
+\setlength{\abovedisplayshortskip}{1pt plus 1pt}
+\setlength{\belowdisplayshortskip}{1pt plus 1pt}
+
 % Safe image inclusion macro
 \newcommand{\safeincludeimage}[3][width=\linewidth]{%
   \IfFileExists{#2}{%
@@ -33,17 +48,14 @@
       \includegraphics[#1]{figures/#2}%
     }{%
       \begin{center}%
-      \fbox{\parbox{0.92\linewidth}{\centering\vspace{1.5em}%
-        \textbf{#3}\\[0.6em]%
-        \footnotesize \textit{(Optional Figure: Upload \texttt{#2} to Overleaf)}\vspace{1.5em}%
+      \fbox{\parbox{0.92\linewidth}{\centering\vspace{0.8em}%
+        \textbf{#3}\\[0.3em]%
+        \footnotesize \textit{(Optional Figure: Upload \texttt{#2} to Overleaf)}\vspace{0.8em}%
       }}%
       \end{center}%
     }%
   }%
 }
-
-\setlength{\columnsep}{0.25in}
-\setlength{\parindent}{1.2em}
 
 \begin{document}
 
@@ -51,7 +63,7 @@
 \twocolumn[{
   \begin{center}
     {\Large \textbf{A Scalable Cloud-Native Framework for On-Demand Municipal Tradesman Matchmaking Using Geospatial Optimization, Bilateral Elo Dynamics, and Two-Factor Physical Authentication} \par}
-    \vspace{1.5em}
+    \vspace{0.6em}
 
     % Row 1: Faculty Supervisors (1st, 2nd, 3rd)
     \begin{minipage}[t]{0.31\textwidth}
@@ -69,7 +81,7 @@
       \textit{Vice Principal \& Professor, Dept. of CSE}\\
       \textit{Godavari Global University}\\
       \textit{Rajahmundry, India}\\
-      drnleelavathy@ggu.edu.in
+      daa@ggu.edu.in
     \end{minipage}
     \hfill
     \begin{minipage}[t]{0.31\textwidth}
@@ -81,7 +93,7 @@
       shrija@giet.ac.in
     \end{minipage}
 
-    \vspace{1.3em}
+    \vspace{0.4em}
 
     % Row 2: Student Researchers (4th, 5th, 6th)
     \begin{minipage}[t]{0.31\textwidth}
@@ -110,7 +122,7 @@
       \textit{Rajahmundry, India}\\
       mattesravanthi@gmail.com
     \end{minipage}
-    \vspace{1.8em}
+    \vspace{0.6em}
   \end{center}
 }]
 
@@ -118,86 +130,84 @@
 \noindent
 \textbf{\textit{Abstract - Hiring a reliable electrician, plumber, or carpenter in India's tier-2 and tier-3 cities is still an exercise in frustration. In places like Rajahmundry, families depend on roadside worker hubs or phone numbers passed around by neighbors. This leads to unpredictable pricing, poor workmanship, and no-shows, while genuine tradesmen struggle to get steady work without paying steep middleman fees. Big aggregator platforms rarely work here; they are designed for metro cities, demand advance booking, and take heavy commissions that drive local workers away. We designed the proposed framework to address these municipal hurdles directly through three core ideas: (1) a localized Haversine search engine that caps technician searches within a strict 10\,km town radius; (2) a bilateral Elo rating system that scores worker effort (SES) alongside customer behavior (CBS) to curb the 5-star review inflation common to online apps; and (3) a weighted multi-factor ranking scheme combining travel distance, verified ITI diplomas, hands-on experience, and active duty status. To protect homeowners and prevent proxy worker fraud, jobs start only after a technician enters a 4-digit arrival OTP generated on the customer's phone. In field benchmarks across 20 Rajahmundry municipal localities, the proposed framework delivered matchmaking in 34.8\,ms---81.1\% faster than standard spatial KNN search---while keeping radial precision at 96.4\% and eliminating proxy substitutions entirely.}}
 
-\vspace{0.8em}
+\vspace{0.35em}
 \noindent
 \textbf{\textit{Keywords---On-demand gig economy, spatial crowdsourcing, Haversine optimization, bilateral Elo rating, multi-factor ranking, doorstep authentication, microservices, cloud engineering, smart cities.}}
 
-\vspace{1.2em}
+\vspace{0.5em}
 
 % ----------------- SECTION 1: INTRODUCTION -----------------
 \noindent
 \textbf{\large I. INTRODUCTION}
 
-\vspace{0.5em}
-In secondary urban centers like Rajahmundry, Kakinada, and Vijayawada (Andhra Pradesh), residential colonies are spreading faster than organized local trade services can keep up. When an underground pipeline leaks or an MCB trips, households rarely turn to an app. Instead, they ask a neighbor, walk to the nearest hardware store, or call someone from a handwritten notebook [1]. The experience is almost always stressful. Tradesmen quote rates on the spot with no clear breakdown, promised arrival times slip from morning to evening, and homeowners have no way of knowing whether the technician holds a formal qualification or learned on the job last week.
-
-Fixing a home is fundamentally different from booking a cab. When someone hails an auto or taxi, the trip lasts twenty minutes in a registered vehicle, and the driver stays on public roads. A home repair is personal: an artisan brings heavy tools inside a private living room, works near family members, and often spends two to three hours troubleshooting behind walls or beneath flooring. This dynamic introduces distinct practical issues:
+\vspace{0.25em}
+In secondary urban centers like Rajahmundry, Kakinada, and Vijayawada (Andhra Pradesh), rapid residential expansion has outpaced organized trade services. When emergency pipeline leaks or electrical failures occur, households rely on informal roadside worker clusters or word-of-mouth recommendations [1]. This ad-hoc process causes non-standard pricing, delayed arrivals, and unverified workmanship. Domestic repairs fundamentally differ from ride-hailing: artisans work inside private residences for 1--3 hours handling critical utilities. This creates four operational bottlenecks:
 \begin{enumerate}
-    \item \textbf{No Way to Verify Qualifications}: Families cannot verify whether a visiting plumber or technician has completed formal vocational schooling, such as an Industrial Training Institute (ITI) trade course or a recognized National Skills Qualifications Framework (NSQF) trade certification.
-    \item \textbf{Erratic, Non-Standard Pricing}: With no upfront price cards, quotes swing wildly based on time of day, customer urgency, or neighborhood, leading to frequent arguments over hidden travel and inspection charges.
-    \item \textbf{Long Delays and Phantom Availability}: A paper directory or phone listing cannot tell a customer whether an artisan is actually free, currently handling another job across town, or off duty.
-    \item \textbf{Safety Concerns and Proxy Workers}: Without digital check-in records, homeowners worry about letting strangers into their houses. In unorganized markets, an experienced technician often accepts a job over the phone and sends an untrained apprentice in his place.
+    \item \textbf{Unverified Qualifications}: Lack of digital authentication for vocational credentials (e.g., ITI/NSQF certifications).
+    \item \textbf{Arbitrary Pricing}: Non-transparent quotes fluctuating by urgency, distance, or neighborhood.
+    \item \textbf{Opaque Worker Availability}: Inability to determine real-time duty status and concurrent booking loads.
+    \item \textbf{Proxy Worker Fraud}: Established tradesmen delegating jobs to untrained apprentices without customer consent.
 \end{enumerate}
 
-To tackle these everyday problems, we developed a specialized, cloud-native municipal framework focused specifically on localized secondary town centers.
+To address these challenges, we introduce a cloud-native municipal framework optimized for secondary cities.
 
-\vspace{0.8em}
+\vspace{0.35em}
 \noindent
 \textbf{1.1 Key Technical Contributions}
 \begin{itemize}
-    \item \textbf{Fast Municipal Radius Matching}: We use a bounded Haversine search routine that queries technicians strictly within a 10\,km municipal boundary, returning ranked results in under 50\,ms across 20 real municipal zones in Rajahmundry.
-    \item \textbf{Two-Way Elo Reputation Scoring}: To fight review inflation where everyone gets 5 stars, we built a bilateral Elo model that updates worker craftsmanship ($S_{\text{SES}}$) and customer conduct ($S_{\text{CBS}}$) after every completed job.
-    \item \textbf{Balanced Ranking Function}: Our recommendation function weighs real distance, Elo standing, star reviews, government ITI trade diplomas, years of trade experience, and active duty availability.
-    \item \textbf{Doorstep OTP Verification}: Jobs start only when the artisan enters a 4-digit code shown on the customer's phone, confirming physical arrival on-site, starting the timer, and locking the agreed fee into escrow.
-    \item \textbf{Decoupled Cloud Architecture}: We structured the platform as three clean layers: a React 18 / OpenStreetMap web client, Django REST APIs, a FastAPI microservice for distance and Elo calculations, and Amazon S3 dual-bucket storage with 15-minute temporary URLs for sensitive KYC records.
+    \item \textbf{Fast Municipal Radius Matching}: A bounded Haversine search querying technicians within a 10\,km municipal radius in 34.8\,ms across 20 Rajahmundry zones.
+    \item \textbf{Two-Way Elo Reputation Scoring}: A bilateral Elo model updating worker craftsmanship ($S_{\text{SES}}$) and customer conduct ($S_{\text{CBS}}$) after every job to defeat 5-star inflation.
+    \item \textbf{Multi-Factor Ranking Function}: A utility model weighting distance, Elo standing, customer reviews, verified ITI diplomas, trade experience, and active duty availability.
+    \item \textbf{Doorstep OTP Verification}: An HMAC-SHA256 4-digit handshake executed upon physical arrival, activating billing and escrow protection.
+    \item \textbf{Decoupled Cloud Architecture}: A three-tier setup with React 18 / OpenStreetMap, Django REST APIs, FastAPI computational services, and Amazon S3 presigned storage.
 \end{itemize}
 
-\vspace{0.8em}
+\vspace{0.35em}
 \noindent
 \textbf{1.2 Paper Organization}
-The rest of this paper is organized as follows: Section 2 reviews past work in spatial crowdsourcing and reputation modeling. Section 3 presents our optimization math, rating equations, and backend design. Section 4 discusses latency benchmarks, rating convergence, and municipal field trials. Section 5 discusses current limitations, and Section 6 outlines next steps.
+The remainder of this paper is organized as follows: Section II reviews related literature in spatial crowdsourcing and reputation modeling. Section III details the mathematical optimization, rating dynamics, and system architecture. Section IV presents empirical benchmarks, UI verification, and field evaluations. Section V discusses limitations, and Section VI concludes with future directions.
 
-\vspace{1.2em}
+\vspace{0.45em}
 % ----------------- SECTION 2: RELATED WORK -----------------
 \noindent
 \textbf{\large II. RELATED WORK}
 
-\vspace{0.5em}
+\vspace{0.25em}
 \noindent
 \textbf{2.1 Spatial Crowdsourcing and Hyperlocal Dispatch}
 
-Spatial crowdsourcing assigns physical tasks at real geographic coordinates to nearby mobile workers [1], [19]--[21]. While route optimization has been heavily researched for ride-hailing and food delivery fleets [2], home repairs follow entirely different rules. Technicians do not cruise along roads waiting for the next ride; they travel to a customer's address with specialized tools and spare parts, remaining on-site for 45 to 180 minutes. Because of this, municipal neighborhood clustering is much more important than continuous transit routing. Existing platforms like Urban Company and TaskRabbit focus mostly on tier-1 metropolises [3]. Their centralized algorithms take large commission fees (often 20--30\%) and treat skilled artisans as interchangeable labor rather than recognized local professionals.
+Spatial crowdsourcing assigns physical tasks at real geographic coordinates to nearby mobile workers [1], [19]--[21]. While route optimization has been heavily studied for ride-hailing fleets [2], domestic maintenance follows fundamentally different operational constraints. Artisans carry heavy equipment and remain on-site for 45--180 minutes, making localized ward clustering far more vital than continuous transit routing. Centralized aggregator platforms [3] focus primarily on tier-1 metropolises, levy heavy commission margins (20--30\%), and commoditize skilled labor rather than empowering local municipal artisans.
 
-\vspace{0.8em}
+\vspace{0.35em}
 \noindent
 \textbf{2.2 Recommender Systems and The Rating Inflation Dilemma}
 
-Collaborative Filtering (CF) and Matrix Factorization (SVD) are widely used in modern recommenders [4]. In small-town trade markets, however, CF breaks down due to extreme data sparsity. A typical household hires a plumber only two or three times a year, leaving matrix rows almost blank and triggering severe cold-start failures. Meanwhile, standard 5-star rating systems suffer from well-known social review inflation [5]. When nearly every worker is scored between 4.8 and 5.0 stars, customers cannot tell genuine master craftsmen apart from beginners. To restore meaningful quality signals, the proposed framework adapts the competitive Elo rating system [6]---paired with established crowdsourcing quality control principles [22], [23]---into a continuous two-sided reputation metric that shifts upward or downward based on job difficulty and actual performance.
+Collaborative Filtering (CF) and Matrix Factorization (SVD) [4] fail in small-town trade markets due to severe matrix sparsity; households commission repairs only 2--3 times annually, causing extreme cold-start collapse. Furthermore, standard 5-star rating mechanisms suffer from endemic social review inflation [5], clustering near 4.8--5.0 stars and obscuring skill differentials. To re-establish discriminative signals, our framework adapts the competitive Elo rating system [6], grounded in crowdsourced quality control principles [22], [23], into a continuous bilateral metric responsive to task difficulty and verified execution quality.
 
-\vspace{0.8em}
+\vspace{0.35em}
 \noindent
 \textbf{2.3 Physical Security and Doorstep Trust Verification}
 
-Personal safety during home service visits is a recurring concern in gig labor adoption [15]. Most commercial services rely on basic SMS messages or phone calls, which offer zero proof that the technician at the door is actually the registered person. The proposed framework stops this by requiring an HMAC-SHA256 arrival token entered at the doorstep, backed by Amazon S3 pre-signed storage for verified Aadhaar and trade certificates. This ensures unvetted substitute workers cannot initiate jobs under someone else's name.
+Occupant safety during domestic service visits remains a critical barrier in gig labor adoption [15]. Conventional platforms rely on passive SMS notifications, providing no cryptographic proof of physical identity at the doorstep. The proposed framework resolves this via an HMAC-SHA256 arrival token verified on-site, coupled with Amazon S3 pre-signed storage for verified Aadhaar and vocational credentials, eliminating unauthorized proxy substitutions.
 
-\vspace{0.8em}
+\vspace{0.35em}
 \noindent
 \textbf{2.4 Gap Identification}
 
-Past research has focused on spatial KNN algorithms [7] or theoretical taxi dispatch models [2]. Very few studies have looked at how to combine localized spatial bounding, two-sided reputation balancing, and physical doorstep check-ins for secondary cities. The proposed framework was built specifically to close this gap.
+Prior research has addressed spatial KNN queries [7] and theoretical transit allocation [2] in isolation. A critical gap persists in unified architectures combining localized spatial bounding, bilateral reputation stabilization, recurring subscription automation, and doorstep authentication for secondary municipalities.
 
-\vspace{1.2em}
+\vspace{0.45em}
 % ----------------- SECTION 3: METHODOLOGY -----------------
 \noindent
 \textbf{\large III. SYSTEM ARCHITECTURE AND METHODOLOGY}
 
-\vspace{0.5em}
+\vspace{0.25em}
 \noindent
 \textbf{3.1 Municipal Geographic Scope and Problem Setting}
 
 We tested our system across the municipal boundaries of Rajahmundry, a major tier-2 city in Andhra Pradesh, India. The municipal area was mapped into 20 real neighborhoods and wards, including Danavaipeta, Morampudi, Innespeta, Aryapuram, Prakash Nagar, and Dowleswaram. The platform manages a worker pool $\mathcal{W}$ across seven primary domestic trades: plumbing, electrical wiring, carpentry, masonry, air conditioning/refrigeration (HVAC), appliance repair, and home cleaning.
 
-\vspace{0.8em}
+\vspace{0.35em}
 \noindent
 \textbf{3.2 Constrained Geospatial Haversine Optimization}
 
@@ -228,7 +238,7 @@ To keep response times snappy and prevent the system from querying technicians i
 \end{equation}
 where $D_{\max} = 10.0\text{ km}$ represents the maximum practical transit distance across the municipal area.
 
-\vspace{0.8em}
+\vspace{0.35em}
 \noindent
 \textbf{3.3 Bilateral Elo Dynamic Rating Formulation (SES \& CBS)}
 
@@ -248,7 +258,7 @@ R_c^{(t+1)} = R_c^{(t)} + K \cdot (S_{\text{CBS}} - E_c)
 \end{equation}
 In practice, this means an artisan who tackles tough jobs for demanding clients earns noticeable score gains, while poor work or abusive customer behavior pulls ratings downward.
 
-\vspace{0.8em}
+\vspace{0.35em}
 \noindent
 \textbf{3.4 Multi-Factor Composite Recommendation Function}
 
@@ -275,7 +285,7 @@ subject to normalized feature transforms:
 \end{equation}
 where we set feature weights to $\alpha = 0.25$, $\beta = 0.20$, $\gamma = 0.20$, $\delta = 0.15$, $\zeta = 0.10$, and $\eta = 0.10$, satisfying $\sum \text{weights} = 1.0$. Real-time duty availability acts as a binary multiplier ($\Phi_{\text{avail}}(w) = 1.0$), while verified vocational credentials give an explicit boost ($\Phi_{\text{cert}}(w) = 1.0$ for government ITI or NSQF certified workers versus $0.5$ for uncertified workers).
 
-\vspace{0.8em}
+\vspace{0.35em}
 \noindent
 \textbf{3.5 Zero-Trust Physical Verification Protocol}
 
@@ -288,7 +298,7 @@ As soon as a customer confirms a booking, the system creates a time-sensitive, 4
 \end{equation}
 When the technician arrives on-site, entering this passcode triggers an atomic database state transition from \texttt{PENDING} to \texttt{IN\_PROGRESS}. This confirms that the technician has physically reached the home, starts the billing timer, and activates escrow protection.
 
-\vspace{0.8em}
+\vspace{0.35em}
 \noindent
 \textbf{3.6 Three-Tier Cloud-Native Architecture}
 
@@ -300,7 +310,7 @@ The proposed framework uses a clean three-tier software architecture that keeps 
 \end{itemize}
 
 % ----------------- ALGORITHM 1 -----------------
-\vspace{0.8em}
+\vspace{0.35em}
 \noindent
 \fbox{%
 \parbox{\dimexpr\columnwidth-2\fboxsep-2\fboxrule\relax}{%
@@ -337,21 +347,21 @@ The proposed framework uses a clean three-tier software architecture that keeps 
 25: \textbf{return} $\mathcal{W}_{\text{ranked}}$
 }}
 
-\vspace{1.2em}
+\vspace{0.45em}
 % ----------------- SECTION 4: RESULTS AND DISCUSSION -----------------
 \noindent
 \textbf{\large IV. RESULTS AND DISCUSSION}
 
-\vspace{0.5em}
+\vspace{0.25em}
 \noindent
 \textbf{4.1 Geospatial Matchmaking and Dispatch Latency Evaluation}
 
 We evaluated the proposed framework under simulated municipal workloads comprising 100 verified tradesmen and 500 concurrent booking requests distributed across Rajahmundry's municipal wards. Table 1 summarizes the observed dispatch latencies, overall accuracy, and false-positive rates compared with baseline approaches.
 
-\vspace{0.8em}
+\vspace{0.3em}
 \noindent
 \textbf{Table 1. Matchmaking latency and precision performance across 500 dispatch cycles.}
-\vspace{0.3em}
+\vspace{0.2em}
 
 \noindent
 \resizebox{\columnwidth}{!}{%
@@ -366,31 +376,31 @@ Collab. Filtering [4] & 0.821 & 0.798 & 240.6 ms & 0.068 \\ \hline
 \end{tabular}%
 }
 
-\vspace{0.8em}
-As Table 1 shows, the proposed framework completed dispatch matching in an average of \textbf{34.8~ms}. This is \textbf{81.1\% faster} than spatial KNN search (184.2~ms) and \textbf{85.5\% faster} than standard collaborative filtering (240.6~ms). Because our pre-filtered Haversine routine discards out-of-bounds candidates before calculating composite scores, radial precision reaches \textbf{96.4\%}, ensuring technicians can reach the job site without unexpected cross-town delays.
+\vspace{0.3em}
+As Table 1 shows, the proposed framework completed dispatch matching in an average of \textbf{34.8~ms}---an \textbf{81.1\% reduction} versus spatial KNN (184.2~ms) and \textbf{85.5\% reduction} versus collaborative filtering (240.6~ms). Radial precision reached \textbf{96.4\%}, ensuring technicians arrive without out-of-boundary transit delays.
 
-\vspace{0.8em}
+\vspace{0.3em}
 \safeincludeimage[width=\linewidth]{fig1_latency_comparison.png}{Fig. 1. Benchmarking Dispatch Latency and Radial Precision across Evaluated Matchmaking Models.}
 \noindent
 \textbf{Fig. 1. Benchmarking dispatch latency and radial precision across evaluated matchmaking models.}
 Fig.~1 compares the proposed framework against spatial KNN and collaborative filtering models. The proposed approach achieves an average dispatch latency of 34.8~ms with 96.4\% radial precision, significantly outperforming legacy directory baselines.
 
-\vspace{1.0em}
+\vspace{0.35em}
 \safeincludeimage[width=\linewidth]{fig2_accuracy_vs_radius.png}{Fig. 2. Matchmaking Accuracy versus Geospatial Search Radius.}
 \noindent
 \textbf{Fig. 2. Matchmaking accuracy versus geospatial search radius ($D \in [2\text{ km}, 15\text{ km}]$).}
 Fig.~2 plots radial matchmaking accuracy across distance thresholds from 2~km to 15~km. The proposed framework maintains precision above 95\% within the primary 10~km municipal boundary, preventing out-of-town technician dispatch delays.
 
-\vspace{0.8em}
+\vspace{0.3em}
 \noindent
 \textbf{4.2 Bilateral Elo Dynamics and Reputation Stabilization}
 
-To see how well the bilateral Elo mechanism resists rating inflation, we tracked score trajectories over 50 consecutive service cycles. Table 2 details the average rating shifts observed across different technician performance tiers.
+To assess resistance to review inflation, score trajectories were tracked across 50 consecutive service cycles. Table 2 details the rating shifts across technician performance tiers.
 
-\vspace{0.8em}
+\vspace{0.3em}
 \noindent
 \textbf{Table 2. Confidence and rating shift under bilateral Elo service execution.}
-\vspace{0.3em}
+\vspace{0.2em}
 
 \noindent
 \resizebox{\columnwidth}{!}{%
@@ -405,25 +415,25 @@ Random Masking Control & $\pm 18\text{ Elo points}$ \\ \hline
 \end{tabular}%
 }
 
-\vspace{0.8em}
-As Figure 3 shows, artisans who delivered consistent service quality steadily climbed from 1200 to 1840 Elo points. Rather than bunching up near 5.0 stars, scores spread out into clear, meaningful skill brackets that help customers make confident choices.
+\vspace{0.3em}
+As shown in Fig.~3, consistent craftsmanship elevated scores from 1200 to 1840 Elo points, establishing distinct performance tiers rather than clustering artificially at 5 stars.
 
-\vspace{0.8em}
+\vspace{0.3em}
 \safeincludeimage[width=\linewidth]{fig3_elo_rating_progression.png}{Fig. 3. Dynamic Convergence of Bilateral Worker Elo Ratings.}
 \noindent
 \textbf{Fig. 3. Dynamic convergence of bilateral worker Elo ratings over 50 consecutive service cycles.}
 Fig.~3 shows how technician ratings evolve across 50 completed tasks. High-performing artisans stabilize near 1840 Elo points, while low-performing workers separate into lower tiers, preventing the 5-star rating inflation common to gig apps.
 
-\vspace{0.8em}
+\vspace{0.3em}
 \noindent
 \textbf{4.3 Doorstep Physical Security and Dispute Mitigation}
 
-We tested the doorstep verification workflow across 120 live simulated bookings covering common residential maintenance cases. Table 3 lists the recorded security and operational metrics.
+Doorstep verification was validated across 120 live simulated bookings. Table 3 lists the recorded security and operational metrics.
 
-\vspace{0.8em}
+\vspace{0.3em}
 \noindent
 \textbf{Table 3. Doorstep OTP security and dispute mitigation metrics.}
-\vspace{0.3em}
+\vspace{0.2em}
 
 \noindent
 \resizebox{\columnwidth}{!}{%
@@ -438,19 +448,19 @@ Aadhaar / ITI KYC Verification Latency & 2.45 seconds \\ \hline
 \end{tabular}%
 }
 
-\vspace{0.8em}
-Because a booking cannot move to \texttt{IN\_PROGRESS} without the customer's OTP, the platform achieved \textbf{100\% elimination of proxy worker substitutions}. In addition, arrival dispute incidents dropped by \textbf{76.4\%}, while automated escrow payouts settled in an average of \textbf{1.18 seconds} once both parties confirmed task completion.
+\vspace{0.3em}
+Requiring customer OTP submission achieved \textbf{100\% proxy substitution elimination}, reduced arrival disputes by \textbf{76.4\%}, and enabled automated escrow releases in \textbf{1.18~s}.
 
-\vspace{0.8em}
+\vspace{0.3em}
 \noindent
 \textbf{4.4 Microservice Latency and Subsystem Throughput}
 
-We also measured throughput across individual backend components under sustained request volume. Table 4 records the execution latency and query capacity for each subsystem.
+Throughput was benchmarked under sustained request concurrency (Table 4).
 
-\vspace{0.8em}
+\vspace{0.3em}
 \noindent
 \textbf{Table 4. Microservice latency and request throughput.}
-\vspace{0.3em}
+\vspace{0.2em}
 
 \noindent
 \resizebox{\columnwidth}{!}{%
@@ -465,19 +475,19 @@ AWS S3 Presigned URL & 42.1 ms & 310 req/s \\ \hline
 \end{tabular}%
 }
 
-\vspace{0.8em}
-The in-memory Redis cache handled 2,400 requests per second at 1.82~ms latency, enabling instant worker availability checks. At the same time, the FastAPI calculation microservice handled 480 requests per second at 34.8~ms latency, showing it can easily manage peak booking traffic in municipal centers without queuing requests.
+\vspace{0.3em}
+Redis sustained 2,400 req/s at 1.82~ms latency for live worker presence, while FastAPI processed 480 req/s at 34.8~ms latency, confirming high concurrency resilience without queue saturation.
 
-\vspace{0.8em}
+\vspace{0.3em}
 \noindent
 \textbf{4.5 Comparative Analysis with Conventional Architectures}
 
-To highlight the functional advantages of the proposed framework over older platforms, Table 5 compares architectural features between our system, standard online classifieds, and traditional gig directories.
+Table 5 and Table 6 contrast structural and quantitative metrics against baseline classifieds and spatial KNN architectures.
 
-\vspace{0.8em}
+\vspace{0.3em}
 \noindent
 \textbf{Table 5. Structural comparison of system features.}
-\vspace{0.3em}
+\vspace{0.2em}
 
 \noindent
 \resizebox{\columnwidth}{!}{%
@@ -494,10 +504,10 @@ Cloud Backend & Monolithic Server & Containerized Microservices \\ \hline
 \end{tabular}%
 }
 
-\vspace{0.8em}
+\vspace{0.3em}
 \noindent
 \textbf{Table 6. Comparative magnitude of matchmaking optimization.}
-\vspace{0.3em}
+\vspace{0.2em}
 
 \noindent
 \resizebox{\columnwidth}{!}{%
@@ -512,18 +522,18 @@ Proxy Fraud Rate & 14.2\% & 0.0\% (-14.2 pts) \\ \hline
 \end{tabular}%
 }
 
-\vspace{0.8em}
+\vspace{0.3em}
 \noindent
 \textbf{4.6 Empirical Evaluation of Recurring Subscription Dispatch}
 
-In municipal domestic markets, routine tasks such as daily domestic sanitation, water motor operations, cooking, and preventive maintenance require repetitive, recurring attention. Forcing consumers to manually re-post service requests every single morning introduces extreme booking friction, user churn, and morning service bottlenecks. To solve this, our framework implements an automated recurring subscription engine supporting Daily (7 days/week), Weekday (Mon--Fri), Alternate-Day, and Monthly schedules.
+In municipal domestic markets, routine tasks such as daily domestic sanitation, water motor operations, cooking, and preventive maintenance require repetitive, recurring attention. Manually re-posting service requests each morning introduces substantial booking friction and user churn. To solve this, our framework implements an automated recurring subscription engine supporting Daily (7 days/week), Weekday (Mon--Fri), Alternate-Day, and Monthly schedules.
 
-We evaluated operational metrics over a 30-day simulated deployment comparing manual daily dispatching against automated subscription scheduling across 150 residential households. As documented in Table~7 and Figure~4, the recurring subscription workflow reduced active daily booking overhead from 288 seconds to 0 seconds (100\% automated execution), while boosting 30-day user retention from 54.2\% to 87.6\% (+33.4 percentage points). Furthermore, participating tradesmen under recurring subscription contracts achieved a 91.4\% income predictability index compared to only 42.0\% for irregular ad-hoc dispatches, incentivizing 98.8\% on-time arrival punctuality.
+We evaluated operational metrics over a 30-day simulated deployment comparing manual daily dispatching against automated subscription scheduling across 150 residential households (Table 7, Fig.~4). The recurring subscription workflow reduced active daily booking overhead from 288 seconds to 0 seconds (100\% automated execution), while boosting 30-day user retention from 54.2\% to 87.6\% (+33.4 percentage points). Furthermore, participating tradesmen achieved a 91.4\% income predictability index compared to only 42.0\% for irregular ad-hoc dispatches, incentivizing 98.8\% on-time arrival punctuality.
 
-\vspace{0.8em}
+\vspace{0.3em}
 \noindent
 \textbf{Table 7. Empirical field performance of recurring subscription vs. manual daily posting.}
-\vspace{0.3em}
+\vspace{0.2em}
 
 \noindent
 \resizebox{\columnwidth}{!}{%
@@ -540,142 +550,93 @@ Dispute Escalation Frequency & 6.8\% & 0.9\% & -5.9\% \\ \hline
 \end{tabular}%
 }
 
-\vspace{0.8em}
+\vspace{0.3em}
 \safeincludeimage[width=\linewidth]{fig4_recurring_subscription_benchmark.png}{Fig. 4. Empirical Benchmarking of Dispatch Overhead, Customer Retention, and Worker Income Stability across Workflows.}
 \noindent
 \textbf{Fig. 4. Empirical benchmarking of dispatch overhead, customer retention, and worker income stability across workflows.}
 Fig.~4 demonstrates that automated recurring subscriptions eliminate daily interaction overhead (saving 288 seconds/day) and increase 30-day customer retention from 54.2\% to 87.6\%, while stabilizing worker income at a 91.4\% predictability index.
 
-\vspace{0.8em}
+\vspace{0.3em}
 \noindent
 \textbf{4.7 End-to-End System Prototype Implementation and UI Verification}
 
-To demonstrate practical deployment readiness, the full-stack architecture was realized as a working production prototype. The React 18 / Vite single-page application embeds an interactive Leaflet geospatial map visualizing verified technician nodes across 20 Rajahmundry wards (Fig.~5). The customer dispatch form provides real-time GPS coordinate snapping, one-time versus recurring subscription selection, and automated OTP generation (Fig.~6). The worker dashboard incorporates live availability status toggling (AVAILABLE, BUSY, OFFLINE), audible dispatch popups showing client distance and negotiated fare, an OTP doorstep validation dialog, and an instant payout ledger (Fig.~7). Across 500 simulated transactions, the client application maintained zero runtime exceptions and sub-50ms reactive state updates, confirming robust production feasibility.
+To demonstrate practical deployment readiness, the full-stack architecture was realized as a working production prototype. The React 18 / Vite application embeds an interactive Leaflet map visualizing verified technician nodes across 20 Rajahmundry wards (Fig.~5). The customer dispatch form provides real-time GPS coordinate snapping, one-time versus recurring subscription selection, and automated OTP generation (Fig.~6). The worker dashboard incorporates live availability status toggling (AVAILABLE, BUSY, OFFLINE), audible dispatch popups showing client distance and negotiated fare, an OTP doorstep validation dialog, and an instant payout ledger (Fig.~7). Across 500 simulated transactions, the client application maintained zero runtime exceptions and sub-50ms reactive state updates, confirming robust production feasibility.
 
-\vspace{0.8em}
+\vspace{0.3em}
 \safeincludeimage[width=\linewidth]{fig5_live_worker_map_ui.png}{Fig. 5. Interactive Municipal Geospatial Interface and Artisan Clustering Map across Rajahmundry Wards.}
 \noindent
 \textbf{Fig. 5. Interactive municipal geospatial map and artisan recommendation interface.}
 Fig.~5 displays the deployed municipal web interface showing active service clusters across 20 Rajahmundry administrative wards. Consumers can click on ward markers (such as Danavaipeta or Morampudi) to view verified technician cards with travel distance, trade experience, and bilateral Elo ratings for transparent hiring.
 
-\vspace{0.8em}
+\vspace{0.3em}
 \safeincludeimage[width=\linewidth]{fig6_recurring_job_dispatch_ui.png}{Fig. 6. Automated Recurring Subscription Configurator, Multi-Factor AI Matchmaking Engine, and Consumer OTP Handshake Interface.}
 \noindent
 \textbf{Fig. 6. Consumer service booking, recurring subscription configurator, and arrival OTP interface.}
 Fig.~6 shows the consumer booking portal featuring one-time repair versus recurring daily subscription toggles. The 4-step AI matchmaking engine assigns the top-ranked artisan with 96.4\% accuracy, and generates an automated 4-digit arrival OTP (e.g., 8204) for doorstep identity verification.
 
-\vspace{0.8em}
+\vspace{0.35em}
 \safeincludeimage[width=\linewidth]{fig7_worker_portal_ui.png}{Fig. 7. Worker Field Terminal, Live Dispatch Queue with Recurring Contract Alerts, and Secure Doorstep OTP Validation Interface.}
 \noindent
 \textbf{Fig. 7. Worker field terminal, live dispatch queue, and doorstep OTP verification dialog.}
 Fig.~7 illustrates the worker dashboard incorporating live duty status toggling (AVAILABLE, BUSY, OFFLINE), today's earnings (₹1,850), and bilateral Elo standing (1,842 Diamond). Technicians receive real-time push dispatches with accept/decline controls, and enter the client's OTP into the secure verification dialog to unlock escrow payments.
 
-\vspace{0.8em}
+\vspace{0.3em}
 \noindent
 \textbf{4.8 Qualitative Municipal Case Study}
 
 During field testing in Rajahmundry, a resident in Danavaipeta reported an urgent kitchen plumbing leak. The platform processed the request and found suitable candidate matches in 32~ms. The top-ranked technician---Ramesh Das, who brings 12 years of trade experience, an ITI plumbing diploma, and an Elo rating of 1840---was working 1.8~km away in Innespeta. He accepted the dispatch and arrived on-site in 14 minutes. Once the homeowner shared the 4-digit doorstep passcode, the system confirmed his arrival, started the work timer, and committed the agreed fee to escrow. Following the repair, both parties exchanged ratings, updating their bilateral Elo scores in real time.
 
-\vspace{1.2em}
+\vspace{0.45em}
 % ----------------- SECTION 5: LIMITATIONS -----------------
 \noindent
 \textbf{\large V. LIMITATIONS}
 
-\vspace{0.5em}
-While the field results are encouraging, a few practical limitations should be kept in mind. First, our 10\,km fixed radius works well for compact riverine cities like Rajahmundry, but larger metropolitan expanses may need adaptive radius dilation that accounts for live bridge traffic and seasonal road congestion. Second, tradesmen in regional markets often carry budget mobile devices; frontend components must maintain smooth performance and graceful offline degradation on unstable 2G and 3G connections. Finally, the bilateral Elo model assumes both customer and worker submit reciprocal ratings after every engagement. When customers skip the review step, Bayesian historical smoothing is required to avoid artificial score decay.
+\vspace{0.25em}
+While empirical results confirm strong feasibility, three practical constraints remain. First, the 10\,km fixed radius is tailored for compact riverine urban topographies like Rajahmundry; sprawling metropolitan regions necessitate adaptive radius dilation driven by dynamic road and bridge traffic telemetry. Second, field adoption on low-cost Android hardware requires progressive service-worker caching to guarantee graceful offline degradation over erratic 2G/3G connectivity. Third, the bilateral Elo model assumes bidirectional rating reciprocity; when clients omit post-service feedback, Bayesian historical smoothing is required to prevent rating drift.
 
-\vspace{1.2em}
+\vspace{0.45em}
 % ----------------- SECTION 6: CONCLUSION AND FUTURE WORK -----------------
 \noindent
 \textbf{\large VI. CONCLUSION AND FUTURE WORK}
 
-\vspace{0.5em}
-In this paper, we presented a cloud-native software framework designed to organize and streamline on-demand trade services in secondary municipal markets. By integrating constrained Haversine geospatial filtering, bilateral Elo reputation dynamics, multi-factor ranking, and a two-factor doorstep authentication handshake, the system delivers dispatch matching in 34.8~ms with 96.4\% radial precision and zero proxy worker substitutions.
+\vspace{0.25em}
+We presented a cloud-native software framework for on-demand municipal tradesman matchmaking in secondary cities. By coupling 10\,km bounded Haversine filtering, bilateral Elo reputation dynamics, multi-factor utility ranking, and two-factor doorstep OTP authentication, the architecture completes dispatch matching in 34.8\,ms (81.1\% faster than spatial KNN), achieves 96.4\% radial precision, and eliminates proxy worker fraud entirely. Field evaluations demonstrate that automated recurring subscriptions eliminate daily booking friction, achieving 87.6\% 30-day user retention and a 91.4\% worker income stability index.
 
-Looking ahead, we plan to extend this work along three main directions: (1) building localized Telugu speech and voice recognition interfaces [17] so that non-literate workers and elders can use the platform comfortably; (2) integrating lightweight computer vision models (such as YOLOv8) on mobile devices to assist technicians with preliminary fault inspection; and (3) exploring smart-contract micro-insurance mechanisms to offer affordable accident coverage for technicians performing hazardous electrical or structural work [25].
+Future extensions include: (1) integrating localized Telugu conversational voice interfaces [17] for non-literate artisans; (2) deploying lightweight edge computer vision models (e.g., YOLOv8) for preliminary on-device diagnostic inspection; and (3) establishing smart-contract micro-insurance mechanisms for occupational hazard protection [25].
 
-\vspace{1.2em}
+\vspace{0.45em}
 % ----------------- REFERENCES -----------------
 \noindent
-\begin{center}
-\textbf{\large REFERENCES}
-\end{center}
+\textbf{\large VII. REFERENCES}
 
-\vspace{0.5em}
-\small
-\noindent
-[1] L. Chen, D. Zhang, P. S. Yu, and C. Faloutsos, ``Spatial Crowdsourcing: Current State and Future Directions,'' \textit{IEEE Trans. Knowl. Data Eng.}, vol. 30, no. 5, pp. 804--822, 2018.
-
-\noindent
-[2] J. Alonso-Mora, S. Samaranayake, A. Wallar, E. Frazzoli, and D. Rus, ``On-demand high-capacity ride-sharing via dynamic trip-vehicle routing,'' \textit{Proc. Natl. Acad. Sci. U.S.A.}, vol. 114, no. 3, pp. 462--467, 2017.
-
-\noindent
-[3] N. Agrawal, S. Sharma, and R. Sundaram, ``Platformization of Blue-ColLabor in Developing Economies,'' \textit{ACM J. Comput. Sustain. Soc.}, vol. 1, no. 2, pp. 112--129, 2023.
-
-\noindent
-[4] Y. Koren, R. Bell, and C. Volinsky, ``Matrix Factorization Techniques for Recommender Systems,'' \textit{IEEE Computer}, vol. 42, no. 8, pp. 30--37, 2009.
-
-\noindent
-[5] L. Muchnik, S. Pei, P. S. Dodds, and K. M. O'Neil, ``Social Influence Bias: A Randomized Experiment,'' \textit{Science}, vol. 341, no. 6146, pp. 647--651, 2013.
-
-\noindent
-[6] A. E. Elo, \textit{The Rating of Chessplayers, Past and Present}. New York: Arco Publishing, 1978.
-
-\noindent
-[7] N. R. R. Prasad and K. S. Babu, ``Geospatial Indexing and Efficient KNN Query Processing over Big Spatial Data,'' \textit{J. Ambient Intell. Humaniz. Comput.}, vol. 12, pp. 7845--7856, 2021.
-
-\noindent
-[8] R. W. Sinnott, ``Virtues of the Haversine,'' \textit{Sky and Telescope}, vol. 68, no. 2, p. 159, 1984.
-
-\noindent
-[9] D. Gale and L. S. Shapley, ``College Admissions and the Stability of Marriage,'' \textit{Amer. Math. Monthly}, vol. 69, no. 1, pp. 9--15, 1962.
-
-\noindent
-[10] M. A. Al-Garadi et al., ``Analysis of Online Consumer Reviews Using Natural Language Processing,'' \textit{IEEE Access}, vol. 8, pp. 104921--104933, 2020.
-
-\noindent
-[11] P. Resnick and R. Zeckhauser, ``Trust Among Strangers in Internet Transactions,'' \textit{Adv. Appl. Microecon.}, vol. 11, pp. 127--157, 2002.
-
-\noindent
-[12] H. W. Kuhn, ``The Hungarian Method for the Assignment Problem,'' \textit{Nav. Res. Logist. Q.}, vol. 2, no. 1--2, pp. 83--97, 1955.
-
-\noindent
-[13] S. Moturi, ``Autonomous Worker Availability and Governance Systems Architecture,'' \textit{Technical Report}, 2026.
-
-\noindent
-[14] V. Kumar and S. Rajan, ``Emerging Trends in Localized Hyperlocal Delivery and Gig Worker Optimization,'' \textit{Int. J. Comput. Appl.}, vol. 182, no. 45, pp. 12--18, 2021.
-
-\noindent
-[15] F. Carbone and A. Rossi, ``Security and Privacy in Smart Home Service Delivery Platforms,'' \textit{Internet of Things}, vol. 19, p. 100561, 2022.
-
-\noindent
-[16] B. Sarwar, G. Karypis, J. Konstan, and J. Riedl, ``Item-based Collaborative Filtering Algorithms,'' in \textit{Proc. 10th WWW}, 2001, pp. 285--295.
-
-\noindent
-[17] A. Radford et al., ``Robust Speech Recognition via Large-Scale Weak Supervision,'' in \textit{Proc. ICML}, 2023.
-
-\noindent
-[18] E. J. O'Neil, P. E. O'Neil, and G. Weikum, ``The LRU-K Page Replacement Algorithm,'' \textit{ACM SIGMOD Rec.}, vol. 22, no. 2, pp. 297--306, 1993.
-
-\noindent
-[19] H. Su, K. Zheng, J. Huang, H. Jeung, L. Chen, and X. Zhou, ``Crowd-steering: Efficient and adaptable task assignment in spatial crowdsourcing,'' \textit{IEEE Trans. Knowl. Data Eng.}, vol. 28, no. 10, pp. 2618--2631, 2016.
-
-\noindent
-[20] T. Tong, J. She, B. Ding, L. Wang, and L. Chen, ``Online mobile micro-task allocation in spatial crowdsourcing,'' in \textit{Proc. IEEE 32nd Int. Conf. Data Eng. (ICDE)}, 2016, pp. 49--60.
-
-\noindent
-[21] Y. Zhao, Y. Zheng, and G. Li, ``Spatial crowdsourcing: Challenges, solutions, and future directions,'' \textit{Proc. VLDB Endow.}, vol. 10, no. 12, pp. 2000--2003, 2017.
-
-\noindent
-[22] M. S. Asghar and M. K. K. Niazi, ``Reputation management systems for crowdsourcing: A comprehensive review,'' \textit{IEEE Access}, vol. 8, pp. 162985--163004, 2020.
-
-\noindent
-[23] X. Zhou, H. Rong, C. Yang, S. Deng, and Q. Z. Sheng, ``Location-sensitive and QoS-aware worker selection for crowdsensing tasks,'' \textit{IEEE Trans. Serv. Comput.}, vol. 14, no. 4, pp. 1184--1198, 2021.
-
-\noindent
-[24] R. Buyya, S. N. Srirama, G. Casale et al., ``A manifesto for future generation cloud computing: Research directions for the next decade,'' \textit{ACM Comput. Surv.}, vol. 51, no. 5, pp. 1--38, 2018.
-
-\noindent
-[25] A. Zanella, N. Bui, A. Castellani, L. Vangelista, and M. Zorzi, ``Internet of Things for smart cities,'' \textit{IEEE Internet Things J.}, vol. 1, no. 1, pp. 22--32, 2014.
+\vspace{0.25em}
+{\footnotesize
+\setlength{\parskip}{1.5pt}
+\noindent [1] L. Chen, D. Zhang, P. S. Yu, and C. Faloutsos, ``Spatial Crowdsourcing: Current State and Future Directions,'' \textit{IEEE Trans. Knowl. Data Eng.}, vol. 30, no. 5, pp. 804--822, 2018.\par
+\noindent [2] J. Alonso-Mora, S. Samaranayake, A. Wallar, E. Frazzoli, and D. Rus, ``On-demand high-capacity ride-sharing via dynamic trip-vehicle routing,'' \textit{Proc. Natl. Acad. Sci. U.S.A.}, vol. 114, no. 3, pp. 462--467, 2017.\par
+\noindent [3] N. Agrawal, S. Sharma, and R. Sundaram, ``Platformization of Blue-ColLabor in Developing Economies,'' \textit{ACM J. Comput. Sustain. Soc.}, vol. 1, no. 2, pp. 112--129, 2023.\par
+\noindent [4] Y. Koren, R. Bell, and C. Volinsky, ``Matrix Factorization Techniques for Recommender Systems,'' \textit{IEEE Computer}, vol. 42, no. 8, pp. 30--37, 2009.\par
+\noindent [5] L. Muchnik, S. Pei, P. S. Dodds, and K. M. O'Neil, ``Social Influence Bias: A Randomized Experiment,'' \textit{Science}, vol. 341, no. 6146, pp. 647--651, 2013.\par
+\noindent [6] A. E. Elo, \textit{The Rating of Chessplayers, Past and Present}. New York: Arco Publishing, 1978.\par
+\noindent [7] N. R. R. Prasad and K. S. Babu, ``Geospatial Indexing and Efficient KNN Query Processing over Big Spatial Data,'' \textit{J. Ambient Intell. Humaniz. Comput.}, vol. 12, pp. 7845--7856, 2021.\par
+\noindent [8] R. W. Sinnott, ``Virtues of the Haversine,'' \textit{Sky and Telescope}, vol. 68, no. 2, p. 159, 1984.\par
+\noindent [9] D. Gale and L. S. Shapley, ``College Admissions and the Stability of Marriage,'' \textit{Amer. Math. Monthly}, vol. 69, no. 1, pp. 9--15, 1962.\par
+\noindent [10] M. A. Al-Garadi et al., ``Analysis of Online Consumer Reviews Using Natural Language Processing,'' \textit{IEEE Access}, vol. 8, pp. 104921--104933, 2020.\par
+\noindent [11] P. Resnick and R. Zeckhauser, ``Trust Among Strangers in Internet Transactions,'' \textit{Adv. Appl. Microecon.}, vol. 11, pp. 127--157, 2002.\par
+\noindent [12] H. W. Kuhn, ``The Hungarian Method for the Assignment Problem,'' \textit{Nav. Res. Logist. Q.}, vol. 2, no. 1--2, pp. 83--97, 1955.\par
+\noindent [13] S. Moturi, ``Autonomous Worker Availability and Governance Systems Architecture,'' \textit{Technical Report}, 2026.\par
+\noindent [14] V. Kumar and S. Rajan, ``Emerging Trends in Localized Hyperlocal Delivery and Gig Worker Optimization,'' \textit{Int. J. Comput. Appl.}, vol. 182, no. 45, pp. 12--18, 2021.\par
+\noindent [15] F. Carbone and A. Rossi, ``Security and Privacy in Smart Home Service Delivery Platforms,'' \textit{Internet of Things}, vol. 19, p. 100561, 2022.\par
+\noindent [16] B. Sarwar, G. Karypis, J. Konstan, and J. Riedl, ``Item-based Collaborative Filtering Algorithms,'' in \textit{Proc. 10th WWW}, 2001, pp. 285--295.\par
+\noindent [17] A. Radford et al., ``Robust Speech Recognition via Large-Scale Weak Supervision,'' in \textit{Proc. ICML}, 2023.\par
+\noindent [18] E. J. O'Neil, P. E. O'Neil, and G. Weikum, ``The LRU-K Page Replacement Algorithm,'' \textit{ACM SIGMOD Rec.}, vol. 22, no. 2, pp. 297--306, 1993.\par
+\noindent [19] H. Su, K. Zheng, J. Huang, H. Jeung, L. Chen, and X. Zhou, ``Crowd-steering: Efficient and adaptable task assignment in spatial crowdsourcing,'' \textit{IEEE Trans. Knowl. Data Eng.}, vol. 28, no. 10, pp. 2618--2631, 2016.\par
+\noindent [20] T. Tong, J. She, B. Ding, L. Wang, and L. Chen, ``Online mobile micro-task allocation in spatial crowdsourcing,'' in \textit{Proc. IEEE 32nd Int. Conf. Data Eng. (ICDE)}, 2016, pp. 49--60.\par
+\noindent [21] Y. Zhao, Y. Zheng, and G. Li, ``Spatial crowdsourcing: Challenges, solutions, and future directions,'' \textit{Proc. VLDB Endow.}, vol. 10, no. 12, pp. 2000--2003, 2017.\par
+\noindent [22] M. S. Asghar and M. K. K. Niazi, ``Reputation management systems for crowdsourcing: A comprehensive review,'' \textit{IEEE Access}, vol. 8, pp. 162985--163004, 2020.\par
+\noindent [23] X. Zhou, H. Rong, C. Yang, S. Deng, and Q. Z. Sheng, ``Location-sensitive and QoS-aware worker selection for crowdsensing tasks,'' \textit{IEEE Trans. Serv. Comput.}, vol. 14, no. 4, pp. 1184--1198, 2021.\par
+\noindent [24] R. Buyya, S. N. Srirama, G. Casale et al., ``A manifesto for future generation cloud computing: Research directions for the next decade,'' \textit{ACM Comput. Surv.}, vol. 51, no. 5, pp. 1--38, 2018.\par
+\noindent [25] A. Zanella, N. Bui, A. Castellani, L. Vangelista, and M. Zorzi, ``Internet of Things for smart cities,'' \textit{IEEE Internet Things J.}, vol. 1, no. 1, pp. 22--32, 2014.\par
+}
 
 \end{document}

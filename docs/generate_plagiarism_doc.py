@@ -10,22 +10,23 @@ title = "A Scalable Cloud-Native Framework for On-Demand Municipal Tradesman Mat
 clean = re.sub(r'(?<!\\)%.*', '', text)
 
 # Extract abstract
-abs_start = clean.find('Abstract - ')
-abs_end = clean.find('}}', abs_start)
-abstract = clean[abs_start + len('Abstract - '):abs_end].strip()
+m_abs = re.search(r'Abstract\s*-\s*(.*?)\}\}', clean, re.DOTALL)
+abstract = m_abs.group(1).strip() if m_abs else ""
 
 # Extract keywords
-kw_start = clean.find('Keyword - ')
-kw_end = clean.find('}}', kw_start)
-keywords = clean[kw_start + len('Keyword - '):kw_end].strip()
+m_kw = re.search(r'Keywords?[\-\—]+\s*(.*?)\}\}', clean, re.DOTALL)
+keywords = m_kw.group(1).strip() if m_kw else ""
 
 # Extract main body
-sec1_start = clean.find(r'\textbf{\large 1. INTRODUCTION}')
-ref_marker = r'\textbf{\large REFERENCES}'
-ref_start = clean.find(ref_marker, sec1_start)
+m_sec1 = re.search(r'\\textbf\{\\large\s+(?:I\.|1\.)\s+INTRODUCTION\}', clean)
+m_ref = re.search(r'\\textbf\{\\large\s+(?:VII\.|7\.)?\s*REFERENCES\}', clean)
+
+sec1_start = m_sec1.start() if m_sec1 else clean.find('INTRODUCTION')
+ref_start = m_ref.start() if m_ref else clean.find('REFERENCES')
+ref_marker_len = len(m_ref.group(0)) if m_ref else len('REFERENCES')
 
 body = clean[sec1_start:ref_start]
-ref_body = clean[ref_start + len(ref_marker):]
+ref_body = clean[ref_start + ref_marker_len:]
 
 def convert_tabular_to_text(match):
     content = match.group(1)
@@ -107,7 +108,7 @@ TITLE:
 
 AUTHORS & AFFILIATION:
 1. Mr. S. Satya Kumar (Assistant Professor, Dept. of CSE-AIML, Guide) - satyakumar.151@gmail.com
-2. Dr. N. Leelavathy (Vice Principal & Professor, Dept. of CSE) - drnleelavathy@ggu.edu.in
+2. Dr. N. Leelavathy (Vice Principal & Professor, Dept. of CSE) - daa@ggu.edu.in
 3. Dr. Shrija Madhu (Professor & HoD, Dept. of Data Science) - shrija@giet.ac.in
 4. Moturi Sameera (Dept. of CSE-DS) - sameeramoturi27@gmail.com
 5. Savarapu Bumika (Dept. of CSE-DS) - bhumisavarapu06@gmail.com

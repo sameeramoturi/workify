@@ -7,7 +7,7 @@ A Scalable Cloud-Native Framework for On-Demand Municipal Tradesman Matchmaking 
 
 AUTHORS & AFFILIATION:
 1. Mr. S. Satya Kumar (Assistant Professor, Dept. of CSE-AIML, Guide) - satyakumar.151@gmail.com
-2. Dr. N. Leelavathy (Vice Principal & Professor, Dept. of CSE) - drnleelavathy@ggu.edu.in
+2. Dr. N. Leelavathy (Vice Principal & Professor, Dept. of CSE) - daa@ggu.edu.in
 3. Dr. Shrija Madhu (Professor & HoD, Dept. of Data Science) - shrija@giet.ac.in
 4. Moturi Sameera (Dept. of CSE-DS) - sameeramoturi27@gmail.com
 5. Savarapu Bumika (Dept. of CSE-DS) - bhumisavarapu06@gmail.com
