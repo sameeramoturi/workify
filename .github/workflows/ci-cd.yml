@@ -137,3 +137,118 @@ jobs:
       - name: Build All Docker Containers
         run: |
           docker compose build
+
+  # ----------------------------------------------------------------------------
+  # 5. Build & Push Docker Images to AWS ECR  (main branch only)
+  # ----------------------------------------------------------------------------
+  build-and-push:
+    name: Build & Push to AWS ECR
+    runs-on: ubuntu-latest
+    needs: [docker-validation]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build & Push Backend Image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/workify-backend:$IMAGE_TAG \
+                       -t $ECR_REGISTRY/workify-backend:latest \
+                       ./backend
+          docker push $ECR_REGISTRY/workify-backend:$IMAGE_TAG
+          docker push $ECR_REGISTRY/workify-backend:latest
+          echo "Backend image pushed: $ECR_REGISTRY/workify-backend:$IMAGE_TAG"
+
+      - name: Build & Push Frontend Image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/workify-frontend:$IMAGE_TAG \
+                       -t $ECR_REGISTRY/workify-frontend:latest \
+                       ./frontend
+          docker push $ECR_REGISTRY/workify-frontend:$IMAGE_TAG
+          docker push $ECR_REGISTRY/workify-frontend:latest
+          echo "Frontend image pushed: $ECR_REGISTRY/workify-frontend:$IMAGE_TAG"
+
+      - name: Build & Push ML Service Image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/workify-ml:$IMAGE_TAG \
+                       -t $ECR_REGISTRY/workify-ml:latest \
+                       ./ml-service
+          docker push $ECR_REGISTRY/workify-ml:$IMAGE_TAG
+          docker push $ECR_REGISTRY/workify-ml:latest
+          echo "ML service image pushed: $ECR_REGISTRY/workify-ml:$IMAGE_TAG"
+
+  # ----------------------------------------------------------------------------
+  # 6. Deploy to EC2 via SSH  (main branch only)
+  # ----------------------------------------------------------------------------
+  deploy:
+    name: Deploy to AWS EC2
+    runs-on: ubuntu-latest
+    needs: [build-and-push]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          envs: GITHUB_SHA
+          script: |
+            set -e
+            echo "=== Deploying Workify — commit $GITHUB_SHA ==="
+
+            # Pull latest code
+            cd /home/ubuntu/workify
+            git pull origin main
+
+            # Login to ECR
+            aws ecr get-login-password --region ap-south-1 | \
+              docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}
+
+            # Export image tag
+            export IMAGE_TAG=$GITHUB_SHA
+            export ECR_REGISTRY=${{ secrets.ECR_REGISTRY }}
+
+            # Pull new images
+            docker pull $ECR_REGISTRY/workify-backend:$IMAGE_TAG
+            docker pull $ECR_REGISTRY/workify-frontend:$IMAGE_TAG
+            docker pull $ECR_REGISTRY/workify-ml:$IMAGE_TAG
+
+            # Tag as latest locally
+            docker tag $ECR_REGISTRY/workify-backend:$IMAGE_TAG  workify-backend:latest
+            docker tag $ECR_REGISTRY/workify-frontend:$IMAGE_TAG workify-frontend:latest
+            docker tag $ECR_REGISTRY/workify-ml:$IMAGE_TAG       workify-ml:latest
+
+            # Rolling restart (zero-downtime)
+            docker compose -f devops/aws/docker-compose.prod.yml \
+              up -d --no-deps --no-build backend frontend ml-service
+
+            # Cleanup old images to free disk space
+            docker image prune -f
+
+            echo "=== ✅ Deployment complete! Running commit: $IMAGE_TAG ==="
