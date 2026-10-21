@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import { Link } from 'react-router-dom';
 import { RAJAHMUNDRY_CENTER, RAJAHMUNDRY_LOCALITIES } from '../data/locations';
+import { getWorkerPhoto } from '../services/api';
 import { MapPin, Navigation, Layers, ZoomIn, ZoomOut, Maximize2, Minimize2, CheckCircle2 } from 'lucide-react';
 
 export default function InteractiveMap({
@@ -228,7 +229,7 @@ export default function InteractiveMap({
             position: relative;
             background-size: cover;
             background-position: center;
-            background-image: url('${worker.photo || "https://images.unsplash.com/photo-1540569014015-19a7be504e3a?w=100"}');
+            background-image: url('${getWorkerPhoto(worker)}');
           ">
             <!-- Availability Indicator Dot -->
             <span style="
@@ -288,7 +289,7 @@ export default function InteractiveMap({
         <div style="font-family: inherit; width: 220px; padding: 4px;">
           <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
             <img
-              src="${worker.photo || 'https://images.unsplash.com/photo-1540569014015-19a7be504e3a?w=100'}"
+              src="${getWorkerPhoto(worker)}"
               alt="${worker.name}"
               style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid #2563eb;"
             />

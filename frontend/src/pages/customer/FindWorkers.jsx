@@ -4,7 +4,7 @@ import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar';
 import InteractiveMap from '../../components/InteractiveMap';
 import { RAJAHMUNDRY_LOCALITIES, ANDHRA_PRADESH_CITIES } from '../../data/locations';
-import { fetchWorkers, INITIAL_WORKERS } from '../../services/api';
+import { fetchWorkers, INITIAL_WORKERS, getWorkerPhoto } from '../../services/api';
 import {
   Search,
   MapPin,
@@ -700,7 +700,7 @@ export default function FindWorkers() {
                     >
                       <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '10px' }}>
                         <img
-                          src={w.photo || 'https://images.unsplash.com/photo-1540569014015-19a7be504e3a?w=100'}
+                          src={getWorkerPhoto(w)}
                           alt={w.name}
                           style={{ width: '48px', height: '48px', borderRadius: '50%', objectFit: 'cover' }}
                         />
@@ -780,7 +780,7 @@ export default function FindWorkers() {
                               backgroundColor: '#dbeafe', overflow: 'hidden', flexShrink: 0
                             }}>
                               <img
-                                src={worker.photo || `https://images.unsplash.com/photo-1540569014015-19a7be504e3a?w=150`}
+                                src={getWorkerPhoto(worker)}
                                 alt={worker.name}
                                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                               />

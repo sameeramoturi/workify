@@ -2,6 +2,7 @@ import puppeteer from 'puppeteer-core';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+import { createServer } from 'vite';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const chromePath = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
@@ -14,6 +15,14 @@ if (!fs.existsSync(outDir)) {
 }
 
 async function run() {
+  console.log('Starting internal Vite server on port 3000...');
+  const server = await createServer({
+    root: __dirname,
+    server: { port: 3000, host: 'localhost' }
+  });
+  await server.listen();
+  console.log('Vite server running at http://localhost:3000/');
+
   console.log('Launching browser using:', executablePath);
   const browser = await puppeteer.launch({
     executablePath,
@@ -26,7 +35,7 @@ async function run() {
 
   const routes = [
     { url: 'http://localhost:3000/', file: 'web_fig_landing_page.png', wait: 2000 },
-    { url: 'http://localhost:3000/workers', file: 'web_fig_workers_map.png', wait: 3500 },
+    { url: 'http://localhost:3000/workers', file: 'web_fig_workers_map.png', wait: 4000 },
     { url: 'http://localhost:3000/post-job', file: 'web_fig_post_job.png', wait: 2000 },
     { url: 'http://localhost:3000/worker-dashboard', file: 'web_fig_worker_dashboard.png', wait: 2500 }
   ];
@@ -44,8 +53,20 @@ async function run() {
     console.log(`Saved screenshot: ${dest}`);
   }
 
+  // Also sync fig5_live_worker_map_ui.png with web_fig_workers_map.png
+  const fig5Path = path.join(outDir, 'fig5_live_worker_map_ui.png');
+  const webWorkersMap = path.join(outDir, 'web_fig_workers_map.png');
+  if (fs.existsSync(webWorkersMap)) {
+    fs.copyFileSync(webWorkersMap, fig5Path);
+    console.log(`Synchronized ${fig5Path} with latest web_fig_workers_map.png`);
+  }
+
   await browser.close();
-  console.log('All screenshots captured successfully!');
+  await server.close();
+  console.log('All screenshots captured and Vite server closed successfully!');
 }
 
-run().catch(console.error);
+run().catch(err => {
+  console.error('Error running screenshot capture:', err);
+  process.exit(1);
+});

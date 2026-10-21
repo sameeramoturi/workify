@@ -1,6 +1,41 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 const ML_BASE_URL = import.meta.env.VITE_ML_URL || 'http://localhost:5001';
 
+// Distinct portraits of diverse tradespeople & service professionals
+export const DIVERSE_WORKER_PHOTOS = [
+  "https://images.unsplash.com/photo-1540569014015-19a7be504e3a?w=300", // Ramesh Das (Plumber)
+  "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300", // Amit Verma (Electrician)
+  "https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?w=300", // Suresh Yadav (Carpenter)
+  "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=300", // Pankaj Mehta (Painter)
+  "https://images.unsplash.com/photo-1584999734482-0361aecad844?w=300", // Vikas Sharma (AC Tech)
+  "https://images.unsplash.com/photo-1530268729831-4b0b9e170218?w=300", // Mahesh Kumar (Mechanic)
+  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300", // Rajesh Varma (Plumber)
+  "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300", // K. Srinivasa Rao (Plumber)
+  "https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=300", // Siva Prasad (Electrician)
+  "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300", // M. Venkata Ramana (Electrician)
+  "https://images.unsplash.com/photo-1520409364224-63400afe26e5?w=300", // P. Satyanarayana (Carpenter)
+  "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=300", // Surya Prakash (Painter)
+  "https://images.unsplash.com/photo-1512485694743-9c9538b4e6e0?w=300", // K. Anand Babu (AC Tech)
+  "https://images.unsplash.com/photo-1595152772835-219674b2a8a6?w=300", // Sai Teja (Mechanic)
+  "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300", // Lakshmi Housekeeping (Cleaner)
+  "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=300", // Durga Bhavani Sanitization (Cleaner)
+  "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=300", // N. Venkatesh (Electrician)
+  "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300", // Ch. Appa Rao (Plumber)
+  "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=300", // G. Satish Kumar (Electrician)
+  "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300", // M. Rambabu (Plumber)
+  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300", // Professional tradesperson
+  "https://images.unsplash.com/photo-1563237023-b1e970526dcb?w=300", // Industrial electrician
+  "https://images.unsplash.com/photo-1528892952291-009c663ce843?w=300", // Senior craftsman
+  "https://images.unsplash.com/photo-1513956589380-bad6acb9b9d4?w=300", // Senior technician
+  "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=300", // Housekeeping expert
+];
+
+export function getWorkerPhoto(worker) {
+  if (worker && worker.photo) return worker.photo;
+  const id = (worker && worker.id) ? Number(worker.id) : 0;
+  return DIVERSE_WORKER_PHOTOS[Math.abs(id) % DIVERSE_WORKER_PHOTOS.length];
+}
+
 export const INITIAL_WORKERS = [
   // -------------------------------------------------------------
   // PLUMBERS
@@ -50,6 +85,7 @@ export const INITIAL_WORKERS = [
     id: 7,
     name: "Rajesh Varma",
     category: "Plumber",
+    photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300",
     rating: 4.7,
     review_count: 89,
     experience_years: 5,
@@ -74,6 +110,7 @@ export const INITIAL_WORKERS = [
     id: 8,
     name: "K. Srinivasa Rao",
     category: "Plumber",
+    photo: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300",
     rating: 4.9,
     review_count: 142,
     experience_years: 10,
@@ -98,6 +135,7 @@ export const INITIAL_WORKERS = [
     id: 18,
     name: "Ch. Appa Rao",
     category: "Plumber",
+    photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300",
     rating: 4.8,
     review_count: 76,
     experience_years: 8,
@@ -126,6 +164,7 @@ export const INITIAL_WORKERS = [
     id: 2,
     name: "Amit Verma",
     category: "Electrician",
+    photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300",
     rating: 4.7,
     review_count: 98,
     experience_years: 6,
@@ -150,6 +189,7 @@ export const INITIAL_WORKERS = [
     id: 9,
     name: "Siva Prasad",
     category: "Electrician",
+    photo: "https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=300",
     rating: 4.8,
     review_count: 110,
     experience_years: 8,
@@ -174,6 +214,7 @@ export const INITIAL_WORKERS = [
     id: 10,
     name: "M. Venkata Ramana",
     category: "Electrician",
+    photo: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300",
     rating: 4.6,
     review_count: 65,
     experience_years: 4,
@@ -198,6 +239,7 @@ export const INITIAL_WORKERS = [
     id: 17,
     name: "N. Venkatesh",
     category: "Electrician",
+    photo: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=300",
     rating: 4.9,
     review_count: 85,
     experience_years: 7,
@@ -226,6 +268,7 @@ export const INITIAL_WORKERS = [
     id: 3,
     name: "Suresh Yadav",
     category: "Carpenter",
+    photo: "https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?w=300",
     rating: 4.6,
     review_count: 76,
     experience_years: 7,
@@ -250,6 +293,7 @@ export const INITIAL_WORKERS = [
     id: 11,
     name: "P. Satyanarayana",
     category: "Carpenter",
+    photo: "https://images.unsplash.com/photo-1520409364224-63400afe26e5?w=300",
     rating: 4.8,
     review_count: 94,
     experience_years: 9,
@@ -278,6 +322,7 @@ export const INITIAL_WORKERS = [
     id: 4,
     name: "Pankaj Mehta",
     category: "Painter",
+    photo: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=300",
     rating: 4.5,
     review_count: 64,
     experience_years: 5,
@@ -302,6 +347,7 @@ export const INITIAL_WORKERS = [
     id: 12,
     name: "Surya Prakash",
     category: "Painter",
+    photo: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=300",
     rating: 4.7,
     review_count: 82,
     experience_years: 6,
@@ -330,6 +376,7 @@ export const INITIAL_WORKERS = [
     id: 5,
     name: "Vikas Sharma",
     category: "AC Technician",
+    photo: "https://images.unsplash.com/photo-1584999734482-0361aecad844?w=300",
     rating: 4.7,
     review_count: 88,
     experience_years: 6,
@@ -354,6 +401,7 @@ export const INITIAL_WORKERS = [
     id: 13,
     name: "K. Anand Babu",
     category: "AC Technician",
+    photo: "https://images.unsplash.com/photo-1512485694743-9c9538b4e6e0?w=300",
     rating: 4.9,
     review_count: 118,
     experience_years: 8,
@@ -382,6 +430,7 @@ export const INITIAL_WORKERS = [
     id: 6,
     name: "Mahesh Kumar",
     category: "Mechanic",
+    photo: "https://images.unsplash.com/photo-1530268729831-4b0b9e170218?w=300",
     rating: 4.4,
     review_count: 52,
     experience_years: 5,
@@ -406,6 +455,7 @@ export const INITIAL_WORKERS = [
     id: 14,
     name: "Sai Teja",
     category: "Mechanic",
+    photo: "https://images.unsplash.com/photo-1595152772835-219674b2a8a6?w=300",
     rating: 4.7,
     review_count: 73,
     experience_years: 6,
@@ -434,6 +484,7 @@ export const INITIAL_WORKERS = [
     id: 15,
     name: "Lakshmi Housekeeping",
     category: "Cleaner",
+    photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300",
     rating: 4.8,
     review_count: 95,
     experience_years: 5,
@@ -458,6 +509,7 @@ export const INITIAL_WORKERS = [
     id: 16,
     name: "Durga Bhavani Sanitization",
     category: "Cleaner",
+    photo: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=300",
     rating: 4.9,
     review_count: 68,
     experience_years: 4,
@@ -486,6 +538,7 @@ export const INITIAL_WORKERS = [
     id: 19,
     name: "G. Satish Kumar",
     category: "Electrician",
+    photo: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=300",
     rating: 4.8,
     review_count: 104,
     experience_years: 7,
@@ -510,6 +563,7 @@ export const INITIAL_WORKERS = [
     id: 20,
     name: "M. Rambabu",
     category: "Plumber",
+    photo: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300",
     rating: 4.9,
     review_count: 156,
     experience_years: 11,
@@ -542,7 +596,7 @@ export async function fetchWorkers(filters = {}) {
     const res = await fetch(`${API_BASE_URL}/workers/?${params.toString()}`);
     if (res.ok) {
       const data = await res.json();
-      if (data && data.length > 0) return data;
+      if (data && data.length > 0) return data.map(w => ({ ...w, photo: w.photo || w.avatar || getWorkerPhoto(w) }));
     }
   } catch (err) {
     console.warn("Backend API not reachable, using mock catalog data:", err);
@@ -606,7 +660,7 @@ const TRADE_MEDIA = {
     ]
   },
   Electrician: {
-    photo: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=300",
+    photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300",
     education: "Diploma in Electrical & Electronics Engineering - Andhra Polytechnic, Kakinada",
     gallery: [
       "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=300",
@@ -621,7 +675,7 @@ const TRADE_MEDIA = {
     ]
   },
   Carpenter: {
-    photo: "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?w=300",
+    photo: "https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?w=300",
     education: "Vocational Certificate in Woodcraft & Carpentry - ITI Rajahmundry",
     gallery: [
       "https://images.unsplash.com/photo-1538688525198-9b88f6f53126?w=300",
@@ -635,7 +689,7 @@ const TRADE_MEDIA = {
     ]
   },
   Painter: {
-    photo: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=300",
+    photo: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=300",
     education: "Certified Master Painter - Asian Paints Color Academy Certification",
     gallery: [
       "https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=300",
@@ -649,7 +703,7 @@ const TRADE_MEDIA = {
     ]
   },
   "AC Technician": {
-    photo: "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=300",
+    photo: "https://images.unsplash.com/photo-1584999734482-0361aecad844?w=300",
     education: "HVAC & Air Conditioning Certification - ITI Andhra Pradesh",
     gallery: [
       "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=300",
@@ -658,12 +712,12 @@ const TRADE_MEDIA = {
       "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?w=300"
     ],
     reviews: [
-      { author: "N. Ramakrishna", locality: "Morampudi", rating: 5, date: "2 days ago", comment: "Our split AC was not cooling in summer heat. Vikram refilled gas and cleaned foam filter in 40 mins. Super chill now!" },
+      { author: "N. Ramakrishna", locality: "Morampudi", rating: 5, date: "2 days ago", comment: "Our split AC was not cooling in summer heat. Refilled gas and cleaned foam filter in 40 mins. Super chill now!" },
       { author: "T. Bhavani", locality: "Aryapuram", rating: 5, date: "6 days ago", comment: "Very genuine technician. Didn't charge for unnecessary parts." }
     ]
   },
   Mechanic: {
-    photo: "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=300",
+    photo: "https://images.unsplash.com/photo-1530268729831-4b0b9e170218?w=300",
     education: "Automobile Engineering Diploma - Govt Polytechnic, Rajahmundry",
     gallery: [
       "https://images.unsplash.com/photo-1486006920555-c77dce18193b?w=300",
@@ -677,7 +731,7 @@ const TRADE_MEDIA = {
     ]
   },
   Cleaner: {
-    photo: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=300",
+    photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300",
     education: "Certified Professional Housekeeping & Sanitization - AP Skill Council",
     gallery: [
       "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=300",
@@ -699,7 +753,7 @@ export function getWorkerById(id) {
 
   return {
     ...found,
-    photo: found.photo || defaults.photo,
+    photo: found.photo || defaults.photo || getWorkerPhoto(found),
     education: found.education || defaults.education,
     gallery: found.gallery && found.gallery.length > 0 ? found.gallery : defaults.gallery,
     reviews: found.reviews && found.reviews.length > 0 ? found.reviews : defaults.reviews,
